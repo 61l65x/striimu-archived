@@ -51,6 +51,7 @@ services:
       - "7878:7878"
     volumes:
       - ./downloads:/downloads
+      - ./media:/media
       - ./config/radarr:/config
     environment:
       - PUID=1000
@@ -65,6 +66,7 @@ services:
       - "8989:8989"
     volumes:
       - ./downloads:/downloads
+      - ./media:/media
       - ./config/sonarr:/config
     environment:
       - PUID=1000
@@ -72,3 +74,30 @@ services:
       - TZ=Etc/UTC
     restart: unless-stopped
 
+  bazarr:
+    image: linuxserver/bazarr
+    container_name: bazarr
+    ports:
+      - "6767:6767"
+    volumes:
+      - ./downloads:/downloads
+      - ./media:/media
+      - ./config/bazarr:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    restart: unless-stopped
+  
+  jackett:
+    image: linuxserver/jackett
+    container_name: jackett
+    ports:
+      - "9117:9117"
+    volumes:
+      - ./config/jackett:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    restart: unless-stopped

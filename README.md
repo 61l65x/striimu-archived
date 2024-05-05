@@ -30,10 +30,11 @@ docker-compose up -d
 ```
 
 4. **Access the Services**
-+ Jellyfin: http://localhost:8096
-+ qBittorrent: http://localhost:8080
-+ Radarr: http://localhost:7878
-+ Sonarr: http://localhost:8989
++ Jellyfin: http://localhost:8096 # Player
++ qBittorrent: http://localhost:8080 # Fetcher
++ Radarr: http://localhost:7878 # Movies
++ Sonarr: http://localhost:8989 # Series
++ Bazarr: http://localhost:6767 # Subtitles
 
 ## File structure
 ```
@@ -53,8 +54,16 @@ docker-compose up -d
 ```bash
 # With colors
 ./docker_logs.sh
-# Basic
-watch docker compose logs --follow --timestamps
+```
+## Monitor Containers
+``` bash
+docker stats
+```
+
+## Go inside container system
++ + Usually fixing permission issues
+``` bash 
+docker exec -it <container name> /bin/sh
 ```
 
 ## Stop Services 

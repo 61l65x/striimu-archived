@@ -2,7 +2,7 @@
 
 # Install Docker and Docker Compose
 sudo apt update
-sudo apt install -y docker.io docker-compose google-chrome-stable
+sudo apt install -y docker.io docker-compose google-chrome-stable ccze
 # Clone the repository (replace with your repository URL)
 # git clone <repository-url>
 # cd <repository-directory>
