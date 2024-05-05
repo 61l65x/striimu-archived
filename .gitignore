@@ -1,0 +1,22 @@
+# Ignore configuration and cache directories
+config/
+cache/
+media/
+
+# Ignore SSL certificates
+*.crt
+*.key
+*.csr
+
+# Ignore Docker artifacts
+docker-compose.override.yml
+.dockerignore
+
+# Ignore editor/IDE settings
+.vscode/
+.idea/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
