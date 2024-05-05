@@ -43,3 +43,32 @@ services:
       - TZ=Etc/UTC
       - WEBUI_PORT=8080
     restart: unless-stopped
+
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    ports:
+      - "7878:7878"
+    volumes:
+      - ./downloads:/downloads
+      - ./config/radarr:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    restart: unless-stopped
+
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    ports:
+      - "8989:8989"
+    volumes:
+      - ./downloads:/downloads
+      - ./config/sonarr:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    restart: unless-stopped
+
