@@ -10,6 +10,7 @@ services:
       - ./config:/config
       - ./cache:/cache
       - ./media:/media
+      - ./downloads:/downloads
     restart: unless-stopped
 
   nginx:
@@ -24,4 +25,21 @@ services:
       - ./server.key:/etc/nginx/server.key
     depends_on:
       - jellyfin
+    restart: unless-stopped
+
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    ports:
+      - "8080:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
+    volumes:
+      - ./downloads:/downloads
+      - ./config/qbittorrent:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - WEBUI_PORT=8080
     restart: unless-stopped
