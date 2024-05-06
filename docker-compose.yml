@@ -101,5 +101,22 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     restart: unless-stopped
-  
+
+  fail2ban:
+    image: crazymax/fail2ban
+    container_name: fail2ban
+    network_mode: host
+    volumes:
+      - ./logs/nginx:/var/log/nginx
+      - ./logs/qbittorrent:/var/log/qbittorrent
+      - ./logs/radarr:/var/log/radarr
+      - ./logs/sonarr:/var/log/sonarr
+      - ./logs/bazarr:/var/log/bazarr
+      - ./logs/jackett:/var/log/jackett
+      - ./fail2ban:/config/fail2ban
+      - ./fail2ban/jail.local:/config/fail2ban/jail.local
+    environment:
+      - F2B_LOG_LEVEL=INFO
+      - F2B_JAIL_LOCAL=/config/fail2ban/jail.local
+    restart: unless-stopped
   
