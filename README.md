@@ -1,9 +1,19 @@
 # Docker Media Server Setup
-## Fast setup for running in local network with http !
-## Overview
-+ Configure VPN before doing anything  Check my other project for Configuring your own !
+
+<img src="docker.webp" alt="Docker" width="325" align="right">  
+
+
+## Fast Setup for Running in Local Network with HTTP
+
+### Overview
+
+**Important**: Configure a VPN before proceeding. Check my other project for configuring your own!
 
 This Docker Compose file sets up a media server with Jellyfin, Nginx, qBittorrent, Radarr, and Sonarr.
+
+### Inter-Container Communication
+
+Use container names instead of IPs, for example, `http://nameofcontainer:port`.
 
 ## Requirements
 
@@ -16,7 +26,7 @@ This Docker Compose file sets up a media server with Jellyfin, Nginx, qBittorren
 
 ```bash
    git clone https://github.com/Jallunator/MyMovieDocker.git
-   cd 
+   cd MyMovieDocker
 ```
 
 2. **Configuration Update the following files and paths**
@@ -33,11 +43,13 @@ docker-compose up -d
 4. **Access the Services**
 + Jellyfin: http://localhost:8096 # Player
 + qBittorrent: http://localhost:8080 # Fetcher
++ + Username: admin Password: `docker compose logs | grep password`
 + Radarr: http://localhost:7878 # Movies
-+ Sonarr: http://localhost:8989 # Series
-+ Jackett: http://localhost:9117 # Handles all indexers as proxy
++ + Add qBitTorrent as download client 
 + + Add indexers in Jacket && Use this URL in Radar
 + + http://jackett:9117/api/v2.0/indexers/all/results/torznab/ 
++ Sonarr: http://localhost:8989 # Series
++ Jackett: http://localhost:9117 # Handles all indexers as proxy
 + Bazarr: http://localhost:6767 # Subtitles
 
 
