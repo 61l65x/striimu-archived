@@ -17,4 +17,5 @@ sleep 15
 google-chrome --new-tab http://localhost:8096 \
               --new-tab http://localhost:8080 \
               --new-tab http://localhost:7878 \
-              --new-tab http://localhost:8989
+              --new-tab http://localhost:6767 \
+              --new-tab http://localhost:9117

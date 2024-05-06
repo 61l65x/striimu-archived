@@ -1,6 +1,7 @@
 # Docker Media Server Setup
 ## Fast setup for running in local network with http !
 ## Overview
++ Configure VPN before doing anything  Check my other project for Configuring your own !
 
 This Docker Compose file sets up a media server with Jellyfin, Nginx, qBittorrent, Radarr, and Sonarr.
 
@@ -34,7 +35,11 @@ docker-compose up -d
 + qBittorrent: http://localhost:8080 # Fetcher
 + Radarr: http://localhost:7878 # Movies
 + Sonarr: http://localhost:8989 # Series
++ Jackett: http://localhost:9117 # Handles all indexers as proxy
++ + Add indexers in Jacket && Use this URL in Radar
++ + http://jackett:9117/api/v2.0/indexers/all/results/torznab/ 
 + Bazarr: http://localhost:6767 # Subtitles
+
 
 ## File structure
 ```
