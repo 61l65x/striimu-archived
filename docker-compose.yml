@@ -12,6 +12,34 @@ services:
       - ./downloads:/downloads
     restart: unless-stopped
 
+  stremio-jackett:
+    image: belmeg/stremio-addon-jackett
+    container_name: stremio-jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - ADDON_NAME=stremio_jacket
+    depends_on:
+      - jackett
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+  
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    ports:
+      - "8191:8191"
+    restart: unless-stopped
+
   stremio-web:
     container_name: stremio-web
     image: stremio-web:latest

@@ -33,7 +33,6 @@ Use container names instead of IPs, for example, `http://nameofcontainer:port`.
 
 + +  Nginx Configuration
 + + SSL certificates if https ( not necessary needed if not in public network )
-+ + TECH_README if want to configure more ! 
 
 3. **Start the Services**
 ```bash
@@ -41,7 +40,7 @@ docker compose up -d
 docker compose up --build -d
 ```
 
-4. **Access the Services**
+4. **Access the Services** ( Configure new passwords !)
 + Jellyfin: http://localhost:8096 # Player For installed media
 + WebTorrent add-on http://localhost:58827 # Streaming torrents
 + qBittorrent: http://localhost:8080 # Fetcher
