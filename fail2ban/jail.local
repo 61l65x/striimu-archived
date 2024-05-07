@@ -49,9 +49,20 @@ port     = 9117
 filter   = jackett
 logpath  = /var/log/jackett/jackett.log
 
-[stremio]
+[stremio-web]
 enabled = true
-port = 1234
-filter = stremio
-logpath = /var/log/stremio/stremio-server.log
+port    = 8081
+filter  = stremio
+logpath = /var/log/stremio-web/access.log
 maxretry = 5
+bantime = 3600
+findtime = 600
+
+[stremio-server]
+enabled = true
+port    = 11470
+filter  = stremio
+logpath = /var/log/stremio-server/access.log
+maxretry = 5
+bantime = 3600
+findtime = 600

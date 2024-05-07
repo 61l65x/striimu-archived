@@ -1,4 +1,3 @@
-version: '3.9'
 
 services:
   jellyfin:
@@ -13,12 +12,25 @@ services:
       - ./downloads:/downloads
     restart: unless-stopped
 
-  stremio-addon-server:
-    image: nyakaspeter/stremio-torrent-stream:latest
-    container_name: stremio-addon-server
+  stremio-web:
+    container_name: stremio-web
+    image: stremio-web:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.stremio-web
+      cache_from:
+        - stremio-web:latest
     ports:
-      - 58827:58827
-      - 58828:58828
+      - "8081:8080"
+    restart: unless-stopped
+  
+  stremio-server:
+    image: stremio/server:latest
+    container_name: stremio-server
+    ports:
+      - "11470:11470"
+    volumes:
+      - ./stremio-server/server-storage:/root/.stremio-server
     restart: unless-stopped
 
   nginx:
@@ -39,7 +51,7 @@ services:
     image: linuxserver/qbittorrent
     container_name: qbittorrent
     ports:
-      - "8080:8080"
+      - "8080:8080" # 8080 host, 8080 container
       - "6881:6881"
       - "6881:6881/udp"
     volumes:
@@ -121,7 +133,8 @@ services:
       - ./logs/sonarr:/var/log/sonarr
       - ./logs/bazarr:/var/log/bazarr
       - ./logs/jackett:/var/log/jackett
-      - ./logs/stremio:/var/log/stremio
+      - ./logs/stremio-web:/var/log/stremio-web
+      - ./logs/stremio-server:/var/log/stremio-server
       - ./fail2ban:/config/fail2ban
       - ./fail2ban/jail.local:/config/fail2ban/jail.local
     environment:
