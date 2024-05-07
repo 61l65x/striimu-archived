@@ -37,18 +37,21 @@ Use container names instead of IPs, for example, `http://nameofcontainer:port`.
 
 3. **Start the Services**
 ```bash
-docker-compose up -d
+docker compose up -d
+docker compose up --build -d
 ```
 
 4. **Access the Services**
-+ Jellyfin: http://localhost:8096 # Player
++ Jellyfin: http://localhost:8096 # Player For installed media
++ WebTorrent add-on http://localhost:58827 # Streaming torrents
 + qBittorrent: http://localhost:8080 # Fetcher
 + + Username: admin Password: `docker compose logs | grep password`
 + Radarr: http://localhost:7878 # Movies
 + + Add qBitTorrent as download client 
-+ + Add indexers in Jacket && Use this URL in Radar
-+ + http://jackett:9117/api/v2.0/indexers/all/results/torznab/ 
++ + Add indexers in Jackett && Use this URL in Radar
++ + `http://jackett:9117/api/v2.0/indexers/all/results/torznab/`
 + Sonarr: http://localhost:8989 # Series
++ + Same with Jackett as in Radarr
 + Jackett: http://localhost:9117 # Handles all indexers as proxy
 + Bazarr: http://localhost:6767 # Subtitles
 

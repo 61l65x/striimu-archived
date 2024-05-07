@@ -21,18 +21,21 @@ enabled  = true
 port     = 8080
 filter   = qbittorrent
 logpath  = /var/log/qbittorrent/qbittorrent.log
+maxretry = 10
 
 [radarr]
 enabled  = true
 port     = 7878
 filter   = radarr
 logpath  = /var/log/radarr/radarr.log
+maxretry = 10
 
 [sonarr]
 enabled  = true
 port     = 8989
 filter   = sonarr
 logpath  = /var/log/sonarr/sonarr.log
+maxretry = 10
 
 [bazarr]
 enabled  = true
@@ -45,3 +48,10 @@ enabled  = true
 port     = 9117
 filter   = jackett
 logpath  = /var/log/jackett/jackett.log
+
+[stremio]
+enabled = true
+port = 1234
+filter = stremio
+logpath = /var/log/stremio/stremio-server.log
+maxretry = 5
