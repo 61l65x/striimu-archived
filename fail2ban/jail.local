@@ -66,3 +66,21 @@ logpath = /var/log/stremio-server/access.log
 maxretry = 5
 bantime = 3600
 findtime = 600
+
+[stremio-jackett]
+enabled = true
+port    = 3000
+filter  = stremio-jackett
+logpath = /var/log/stremio-jackett/access.log
+maxretry = 5
+bantime = 3600
+findtime = 600
+
+[flaresolverr]
+enabled = true
+port    = 8191
+filter  = flaresolverr
+logpath = /var/log/flaresolverr/access.log
+maxretry = 5
+bantime = 3600
+findtime = 600

@@ -163,11 +163,15 @@ services:
       - ./logs/jackett:/var/log/jackett
       - ./logs/stremio-web:/var/log/stremio-web
       - ./logs/stremio-server:/var/log/stremio-server
+      - ./logs/stremio-jackett:/var/log/stremio-jackett
+      - ./logs/flaresolverr:/var/log/flaresolverr
       - ./fail2ban:/config/fail2ban
       - ./fail2ban/jail.local:/config/fail2ban/jail.local
+      - ./fail2ban/filter.d:/config/fail2ban/filter.d
     environment:
       - F2B_LOG_LEVEL=INFO
       - F2B_JAIL_LOCAL=/config/fail2ban/jail.local
     restart: unless-stopped
+
 
   
