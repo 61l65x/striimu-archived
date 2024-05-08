@@ -62,6 +62,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
+    networks:
+      - internal
     ports:
       - "8191:8191"
     restart: unless-stopped
@@ -74,6 +76,8 @@ services:
       dockerfile: services/stremio-web/Dockerfile
       cache_from:
         - stremio-web:latest
+    networks:
+      - internal
     ports:
       - "8081:8080"
     restart: unless-stopped
@@ -90,6 +94,8 @@ services:
   qbittorrent:
     image: linuxserver/qbittorrent
     container_name: qbittorrent
+    networks:
+      - internal
     ports:
       - "8080:8080" # 8080 host, 8080 container
       - "6881:6881"
@@ -107,6 +113,8 @@ services:
   radarr:
     image: linuxserver/radarr
     container_name: radarr
+    networks:
+      - internal
     ports:
       - "7878:7878"
     volumes:
@@ -122,6 +130,8 @@ services:
   sonarr:
     image: linuxserver/sonarr
     container_name: sonarr
+    networks:
+      - internal
     ports:
       - "8989:8989"
     volumes:
@@ -137,6 +147,8 @@ services:
   bazarr:
     image: linuxserver/bazarr
     container_name: bazarr
+    networks:
+      - internal
     ports:
       - "6767:6767"
     volumes:
@@ -152,6 +164,8 @@ services:
   jackett:
     image: linuxserver/jackett
     container_name: jackett
+    networks:
+      - internal
     ports:
       - "9117:9117"
     volumes:
