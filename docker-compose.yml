@@ -1,10 +1,18 @@
 # File: docker-compose.yml
 
+networks:
+  internal:
+    name: internal
+    driver: bridge
+
+
 services:
 
   nginx:
     image: nginx
     container_name: nginx
+    networks:
+      - internal
     ports:
       - "80:80"
       - "443:443"
@@ -12,13 +20,14 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/server.crt:/etc/nginx/server.crt
       - ./nginx/server.key:/etc/nginx/server.key
-    depends_on:
-      - toplevel-ui
     restart: unless-stopped
-
+ 
   jellyfin:
     image: jellyfin/jellyfin
     container_name: jellyfin
+    networks:
+      - internal
+      - default
     ports:
       - "8096:8096"
     volumes:
