@@ -2,9 +2,6 @@
 
 <img src="docker.webp" alt="Docker" width="325" align="right">  
 
-
-## Fast Setup for Running in Local Network with HTTP
-
 ### Overview
 
 **Important**: Configure a VPN before proceeding. Check my other project for configuring your own!

@@ -6,10 +6,10 @@ services:
     ports:
       - "8096:8096"
     volumes:
-      - ./config:/config
-      - ./cache:/cache
-      - ./media:/media
-      - ./downloads:/downloads
+      - ./services/jellyfin/config:/config
+      - ./services/jellyfin/cache:/cache
+      - ./services/jellyfin/media:/media
+      - ./services/jellyfin/downloads:/downloads
     restart: unless-stopped
 
   stremio-jackett:
@@ -58,7 +58,7 @@ services:
     ports:
       - "11470:11470"
     volumes:
-      - ./stremio-server/server-storage:/root/.stremio-server
+      - ./services/stremio-server/server-storage:/root/.stremio-server
     restart: unless-stopped
 
   nginx:
@@ -83,8 +83,8 @@ services:
       - "6881:6881"
       - "6881:6881/udp"
     volumes:
-      - ./downloads:/downloads
-      - ./config/qbittorrent:/config
+      - ./services/qbittorrent/downloads:/downloads
+      - ./services/qbittorrent/config/qbittorrent:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -98,9 +98,9 @@ services:
     ports:
       - "7878:7878"
     volumes:
-      - ./downloads:/downloads
-      - ./media:/media
-      - ./config/radarr:/config
+      - ./services/radarr/downloads:/downloads
+      - ./services/radarr/media:/media
+      - ./services/radarr/config/radarr:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -113,9 +113,9 @@ services:
     ports:
       - "8989:8989"
     volumes:
-      - ./downloads:/downloads
-      - ./media:/media
-      - ./config/sonarr:/config
+      - ./services/sonarr/downloads:/downloads
+      - ./services/sonarr/media:/media
+      - ./services/sonarr/config/sonarr:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -128,9 +128,9 @@ services:
     ports:
       - "6767:6767"
     volumes:
-      - ./downloads:/downloads
-      - ./media:/media
-      - ./config/bazarr:/config
+      - ./services/bazarr/downloads:/downloads
+      - ./services/bazarr/media:/media
+      - ./services/bazarr/config/bazarr:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -143,7 +143,7 @@ services:
     ports:
       - "9117:9117"
     volumes:
-      - ./config/jackett:/config
+      - ./services/jackett/config/jackett:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -155,23 +155,20 @@ services:
     container_name: fail2ban
     network_mode: host
     volumes:
-      - ./logs/nginx:/var/log/nginx
-      - ./logs/qbittorrent:/var/log/qbittorrent
-      - ./logs/radarr:/var/log/radarr
-      - ./logs/sonarr:/var/log/sonarr
-      - ./logs/bazarr:/var/log/bazarr
-      - ./logs/jackett:/var/log/jackett
-      - ./logs/stremio-web:/var/log/stremio-web
-      - ./logs/stremio-server:/var/log/stremio-server
-      - ./logs/stremio-jackett:/var/log/stremio-jackett
-      - ./logs/flaresolverr:/var/log/flaresolverr
-      - ./fail2ban:/config/fail2ban
-      - ./fail2ban/jail.local:/config/fail2ban/jail.local
-      - ./fail2ban/filter.d:/config/fail2ban/filter.d
+      - ./services/fail2ban/logs/nginx:/var/log/nginx
+      - ./services/fail2ban/logs/qbittorrent:/var/log/qbittorrent
+      - ./services/fail2ban/logs/radarr:/var/log/radarr
+      - ./services/fail2ban/logs/sonarr:/var/log/sonarr
+      - ./services/fail2ban/logs/bazarr:/var/log/bazarr
+      - ./services/fail2ban/logs/jackett:/var/log/jackett
+      - ./services/fail2ban/logs/stremio-web:/var/log/stremio-web
+      - ./services/fail2ban/logs/stremio-server:/var/log/stremio-server
+      - ./services/fail2ban:/config/fail2ban
+      - ./services/fail2ban/jail.local:/config/fail2ban/jail.local
+      - ./services/fail2ban/filter.d:/config/fail2ban/filter.d
     environment:
       - F2B_LOG_LEVEL=INFO
       - F2B_JAIL_LOCAL=/config/fail2ban/jail.local
     restart: unless-stopped
-
 
   

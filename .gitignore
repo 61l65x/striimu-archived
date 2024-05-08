@@ -2,6 +2,7 @@
 config/
 cache/
 media/
+downloads/
 
 # Ignore SSL certificates
 *.crt
@@ -19,4 +20,4 @@ docker-compose.override.yml
 # Ignore system files
 .DS_Store
 Thumbs.db
-
+**stremio-cache
