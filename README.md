@@ -1,6 +1,6 @@
 # Docker Media Server Setup
 
-<img src="docker.webp" alt="Docker" width="325" align="right">  
+<img src="assets/docker.webp" alt="Docker" width="325" align="right">  
 
 ### Overview
 
