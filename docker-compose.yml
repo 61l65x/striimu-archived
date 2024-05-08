@@ -27,7 +27,6 @@ services:
     container_name: jellyfin
     networks:
       - internal
-      - default
     ports:
       - "8096:8096"
     volumes:
@@ -40,6 +39,8 @@ services:
   stremio-jackett:
     image: belmeg/stremio-addon-jackett
     container_name: stremio-jackett
+    networks:
+      - internal
     environment:
       - PUID=1000
       - PGID=1000
