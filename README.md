@@ -37,39 +37,82 @@ docker compose up -d
 docker compose up --build -d
 ```
 
-4. **Access the Services** ( Configure new passwords !)
-+ Jellyfin: http://localhost:8096 # Player For installed media
-+ WebTorrent add-on http://localhost:58827 # Streaming torrents
-+ qBittorrent: http://localhost:8080 # Fetcher
-+ + Username: admin Password: `docker compose logs | grep password`
-+ Radarr: http://localhost:7878 # Movies
-+ + Add qBitTorrent as download client 
-+ + Add indexers in Jackett && Use this URL in Radar
-+ + `http://jackett:9117/api/v2.0/indexers/all/results/torznab/`
-+ Sonarr: http://localhost:8989 # Series
-+ + Same with Jackett as in Radarr
-+ Jackett: http://localhost:9117 # Handles all indexers as proxy
-+ Bazarr: http://localhost:6767 # Subtitles
+## Access the Services
+
+This section provides details on how to access each service within our network. **Note**: Only streaming services and the top-level UI (currently in development) are exposed to the Internet.
 
 
-## File structure
-```
-├── config/
-│   ├── jellyfin/
-│   ├── qbittorrent/
-│   ├── radarr/
-│   └── sonarr/
-├── cache/
-├── media/
-├── downloads/
-├── nginx.conf
-├── server.crt
-└── server.key
-```
+
+### Streaming Services
+
+- **Jellyfin** (Media Player)
+  - **URL**: `http://localhost:8096`
+  - Access media stored and streamed from this server.
+  
+- **qBittorrent** (Torrent Client)
+  - **URL**: `http://localhost:8080`
+  - **Default Credentials**: Username: admin | Password: Check via `docker compose logs | grep password`
+  - Configured as a download client in Radarr and Sonarr.
+
+#### Integrated Media Management
+
+- **Radarr, Sonarr & Bazarr**
+  - These services are tightly integrated to streamline the management of your media library:
+    - **Radarr** (Movies): `http://localhost:7878`
+      - Manages and downloads movies.
+      - Integrated with Jackett for indexer management via URL: `http://jackett:9117/api/v2.0/indexers/all/results/torznab/`.
+    - **Sonarr** (TV Series): `http://localhost:8989`
+      - Manages and downloads television series.
+    - **Bazarr** (Subtitles): `http://localhost:6767`
+      - Downloads subtitles automatically, working in conjunction with Sonarr and Radarr.
+
+- **Jackett** (Indexer Management)
+  - **URL**: `http://localhost:9117`
+  - Central management for various indexers used by Radarr and Sonarr.
+
+- **Stremio** (Media Aggregation)
+  - **Stremio Web**: `http://localhost:8081` (Development and internal use)
+  - **Stremio Server**: `http://localhost:11470` (Handles media indexing and streaming)
+
+### Support Services
+
+- **FlareSolverr** (CAPTCHA Solver Proxy)
+  - For resolving CAPTCHAs encountered by scrapers, used internally.
+
+- **Fail2Ban** (Intrusion Prevention)
+  - Monitors log files and bans IPs that show malicious signs.
+
+### Development Tools
+
+- **nginx** (Web Server and Reverse Proxy)
+  - Handles requests and serves as the front-facing server.
+  - **Configuration Files**: Located at `./nginx/`.
+
+### Network Security
+
+- **WireGuard client under development and also the own VPN server !**
+
+- All services are contained within a secure internal Docker network.
+- External access is strictly controlled and monitored through nginx and Fail2Ban.
+
+### Top-Level UI
+
+- **Under Development**: A unified interface to manage all services efficiently.
+
+### Additional Information
+
+- All services are running within an internal Docker network to ensure security and isolation.
+- The top-level UI for managing these services is currently under development and will be accessible upon release.
+- Ensure that new passwords are configured for all services after installation to secure access.
+
+---
+
 ## Monitor Logs
 ```bash
 # With colors
-./docker_logs.sh
+./scripts/docker_logs.sh
+# Multi monitoring 
+./scripts/logs_stats.sh
 ```
 ## Monitor Containers
 ``` bash
@@ -77,7 +120,6 @@ docker stats
 ```
 
 ## Go inside container system
-+ + Usually fixing permission issues
 ``` bash 
 docker exec -it <container name> /bin/sh
 ```
@@ -90,4 +132,52 @@ docker-compose down
 ## Clean Up
 ```bash
 docker-compose down -v
+```
+
+## File structure
+```
+Project Root
+│
+├── assets
+│   └── docker.webp
+│
+├── config
+│   ├── bazarr
+│   ├── fail2ban
+│   ├── jackett
+│   ├── jellyfin
+│   ├── qbittorrent
+│   ├── radarr
+│   └── sonarr
+│
+├── nginx
+│   ├── nginx.conf
+│   ├── server.crt
+│   └── server.key
+│
+├── scripts
+│   ├── do_all.sh
+│   ├── docker_logs.sh
+│   └── logs_stats.sh
+│
+├── services
+│   ├── bazarr
+│   ├── fail2ban
+│   ├── jackett
+│   ├── jellyfin
+│   ├── qbittorrent
+│   ├── radarr
+│   ├── sonarr
+│   ├── stremio-server
+│   └── stremio-web
+│
+├── toplevel-ui
+│   ├── backend
+│   ├── frontend
+│   └── docker-compose.yml
+│
+├── docker-compose.yml
+├── README.md
+└── TODO.md
+
 ```
