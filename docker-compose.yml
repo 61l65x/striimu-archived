@@ -97,7 +97,7 @@ services:
     networks:
       - internal
     ports:
-      - "8080:8080" # 8080 host, 8080 container
+      - "8080:8080" # Remove when running trough nginx
       - "6881:6881"
       - "6881:6881/udp"
     volumes:
