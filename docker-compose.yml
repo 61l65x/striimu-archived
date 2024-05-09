@@ -7,6 +7,29 @@ networks:
 
 
 services:
+  #wireguard:
+  #  image: linuxserver/wireguard
+  #  container_name: wireguard
+  #  cap_add:
+  #    - NET_ADMIN
+  #    - SYS_MODULE
+  #  volumes:
+  #    - ./wireguard/config:/config
+  #    - /lib/modules:/lib/modules
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Europe/London
+  #    - SERVERURL=your_vpn_server.com # Change to your VPN server address
+  #    - SERVERPORT=51820
+  #    - PEERS=1 # Number of peers, adjust as necessary
+  #    - PEERDNS=auto
+  #    - INTERNAL_SUBNET=10.13.13.0
+  #  sysctls:
+  #    - net.ipv4.conf.all.src_valid_mark=1
+  #  restart: unless-stopped
+  #  networks:
+  #    - internal
 
   nginx:
     image: nginx
@@ -28,7 +51,7 @@ services:
     networks:
       - internal
     ports:
-      - "8096:8096"
+      - "8096:8096" # Remove when running trough nginx
     volumes:
       - ./services/jellyfin/config:/config
       - ./services/jellyfin/cache:/cache
@@ -49,7 +72,7 @@ services:
     depends_on:
       - jackett
     ports:
-      - "3000:3000"
+      - "3000:3000" # Remove when running trough nginx
     restart: unless-stopped
   
   flaresolverr:
@@ -65,7 +88,7 @@ services:
     networks:
       - internal
     ports:
-      - "8191:8191"
+      - "8191:8191"  # Remove when running trough nginx
     restart: unless-stopped
 
   stremio-web:
@@ -79,7 +102,7 @@ services:
     networks:
       - internal
     ports:
-      - "8081:8080"
+      - "8081:8080"  # Remove when running trough nginx
     restart: unless-stopped
   
   stremio-server:
