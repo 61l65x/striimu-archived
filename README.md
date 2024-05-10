@@ -1,12 +1,15 @@
 # Docker Media Server Setup
 
+**Important**: Configure a VPN before proceeding. 
+
+> :warning: **Secure Your Connection**: Ensure you have a VPN configured for secure access. Use an existing VPN, set it up to connect through the WireGuard container, or create your own for free on Oracle Cloud. Guide for creating the VCN and VPN, [tutorial on YouTube](https://www.youtube.com/watch?v=wV61_bcABek).
+
+> :bulb: **Real Debrid as an Option**: For enhanced streaming, consider integrating Real Debrid to access high-speed downloads and private streams. Real Debrid can complement a VPN for improved privacy—ideal for those who prioritize security.
 <img src="assets/docker.webp" alt="Docker" width="325" align="right">  
 
 ### Overview
 
-**Important**: Configure a VPN before proceeding. Check my other project for configuring your own!
-
-This Docker Compose file sets up a media server with Jellyfin, Nginx, qBittorrent, Radarr, and Sonarr.
+This Docker Compose file sets up a media server with Jellyfin, Nginx, qBittorrent, Radarr, and Sonarr, Wireguard, stremio and lots of other awesome technologies !
 
 ### Inter-Container Communication
 

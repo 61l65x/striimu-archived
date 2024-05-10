@@ -31,6 +31,23 @@ services:
   #  networks:
   #    - internal
 
+  # jackett addon for stremio
+  #stremio-jackett:
+  #  image: belmeg/stremio-addon-jackett
+  #  container_name: stremio-jackett
+  #  networks:
+  #    - internal
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Etc/UTC
+  #    - ADDON_NAME=stremio_jacket
+  #  depends_on:
+  #    - jackett
+  #  ports:
+  #    - "3000:3000" # Remove when running trough nginx
+  #  restart: unless-stopped
+
   nginx:
     image: nginx
     container_name: nginx
@@ -51,28 +68,11 @@ services:
     networks:
       - internal
     ports:
-      - "8096:8096" # Remove when running trough nginx
+      - "8096:8096" # Remove when running through nginx
     volumes:
+      - ./shared-media-downloads:/downloads
       - ./services/jellyfin/config:/config
       - ./services/jellyfin/cache:/cache
-      - ./services/jellyfin/media:/media
-      - ./services/jellyfin/downloads:/downloads
-    restart: unless-stopped
-
-  stremio-jackett:
-    image: belmeg/stremio-addon-jackett
-    container_name: stremio-jackett
-    networks:
-      - internal
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-      - ADDON_NAME=stremio_jacket
-    depends_on:
-      - jackett
-    ports:
-      - "3000:3000" # Remove when running trough nginx
     restart: unless-stopped
   
   flaresolverr:
@@ -120,11 +120,11 @@ services:
     networks:
       - internal
     ports:
-      - "8080:8080" # Remove when running trough nginx
+      - "8080:8080" # Remove when running through nginx
       - "6881:6881"
       - "6881:6881/udp"
     volumes:
-      - ./services/qbittorrent/downloads:/downloads
+      - ./shared-media-downloads:/downloads
       - ./services/qbittorrent/config/qbittorrent:/config
     environment:
       - PUID=1000
@@ -141,8 +141,7 @@ services:
     ports:
       - "7878:7878"
     volumes:
-      - ./services/radarr/downloads:/downloads
-      - ./services/radarr/media:/media
+      - ./shared-media-downloads:/downloads
       - ./services/radarr/config/radarr:/config
     environment:
       - PUID=1000
@@ -158,8 +157,7 @@ services:
     ports:
       - "8989:8989"
     volumes:
-      - ./services/sonarr/downloads:/downloads
-      - ./services/sonarr/media:/media
+      - ./shared-media-downloads:/downloads
       - ./services/sonarr/config/sonarr:/config
     environment:
       - PUID=1000
@@ -175,8 +173,7 @@ services:
     ports:
       - "6767:6767"
     volumes:
-      - ./services/bazarr/downloads:/downloads
-      - ./services/bazarr/media:/media
+      - ./shared-media-downloads:/downloads
       - ./services/bazarr/config/bazarr:/config
     environment:
       - PUID=1000
