@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# !!!!! ADD TO SUDOERS FILE !!!!!
+# username ALL=(ALL) NOPASSWD: /usr/sbin/iftop, /usr/bin/lsof
+
 # Define profiles
 declare -a profiles=("streaming" "install")
 
@@ -45,6 +48,7 @@ if [[ "$monitor_answer" == "y" ]]; then
     tmux select-pane -t 0
     tmux send-keys "docker compose --profile $profile logs --follow --timestamps | ccze -A" C-m
     tmux select-pane -t 1
+    tmux send-keys "sudo iftop -i wlp41s0" C-m
     tmux split-window -v
     tmux select-pane -t 2
     tmux split-window -v
@@ -52,8 +56,10 @@ if [[ "$monitor_answer" == "y" ]]; then
     tmux send-keys "docker stats" C-m
     tmux select-pane -t 3
     tmux send-keys "while true; do sudo lsof -i -P -n | grep docker; sleep 10; clear; done" C-m
-    tmux select-pane -t 1
-    tmux send-keys "sudo iftop -i wlp41s0" C-m
+    tmux select-pane -t 3
+    tmux split-window -v
+    tmux select-pane -t 4
+    tmux send-keys "watch -n 1 'docker ps'" C-m
     tmux attach-session -t docker_monitor
     echo "Press ctrl+b to control tmux"
 fi
