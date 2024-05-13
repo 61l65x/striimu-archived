@@ -25,15 +25,6 @@ http {
         }
     }
 
-    # Auth service to validate tokens
-    #location = /auth/validate {
-    #    internal;
-    #    proxy_pass http://auth-service:3000/validate;  # Endpoint to validate tokens
-    #    proxy_pass_request_body off;  # Don't send the body to the auth service
-    #    proxy_set_header Content-Length "";
-    #    proxy_set_header X-Original-URI $request_uri;
-    #}
-
     server {
         listen 443 ssl;
         server_name localhost;
@@ -52,49 +43,28 @@ http {
         add_header X-XSS-Protection "1; mode=block";
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
-        # Main location to serve the frontend and handle authentication
-        #location / {
-        #    auth_request /auth/validate;
-        #    proxy_pass http://frontend:80/;
-        #    include /etc/nginx/proxy_params.conf;
-        #}
 
-        # Authentication API accessible without token for login purposes
-        #location /auth/ {
-        #    proxy_pass http://auth-service:3000/;
-        #    include /etc/nginx/proxy_params.conf;
-        #}
-
-        # Backend API
-        #location /api/ {
-        #    auth_request /auth/validate;
-        #    proxy_pass http://backend:5000/;
-        #    include /etc/nginx/proxy_params.conf;
-        #}
-        
-        # Jellyfin Media Server
         location /jellyfin/ {
-            #auth_request /auth/validate;
             resolver 127.0.0.11 valid=30s;
             set $upstream_jellyfin jellyfin:8096;
             proxy_pass http://$upstream_jellyfin;
             include /etc/nginx/proxy_params.conf;
         }
-
-        # Stremio Web
+        
+        # rewrite /stremio-web/ to / for stremio-web for base url
         location /stremio-web/ {
-            #auth_request /auth/validate;
             resolver 127.0.0.11 valid=30s;
-            rewrite ^/stremio-web/(.*)$ /$1 break;
-            proxy_pass http://stremio-web:8080;
+            set $upstream_stremio_web stremio-web:8080;
+            rewrite ^/stremio-web/(.*)$ /$1 break; 
+            proxy_pass http://$upstream_stremio_web;
             include /etc/nginx/proxy_params.conf;
         }
+
 
         if ($http_user_agent ~* "wget|curl|bot|spider|crawl") {
             return 403;
         }
     }
-
 
     map $http_upgrade $connection_upgrade {
     default upgrade;
@@ -102,4 +72,3 @@ http {
     }
 
 }
-

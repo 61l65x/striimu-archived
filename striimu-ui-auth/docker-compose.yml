@@ -1,26 +1,42 @@
 # File: toplevel-ui/docker-compose.yml
 
+networks:
+  internal:
+    external: true
+
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
     volumes:
       - ./backend:/app
     environment:
       - FLASK_ENV=development
+    networks:
+      - internal
     restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "8080:80"
     volumes:
       - ./frontend:/usr/share/nginx/html
     depends_on:
       - backend
+    networks:
+      - internal
+    restart: unless-stopped
+
+    auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    volumes:
+      - ./auth-service:/app
+    environment:
+      - NODE_ENV=production
+    networks:
+      - internal
     restart: unless-stopped

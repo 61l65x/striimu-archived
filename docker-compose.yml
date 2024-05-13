@@ -10,9 +10,6 @@ services:
   nginx:
     image: nginx
     container_name: nginx
-    depends_on:
-      - jellyfin
-      #- stremio-web
     profiles:
       - all
       - streaming
