@@ -12,7 +12,7 @@ services:
     container_name: nginx
     depends_on:
       - jellyfin
-      - stremio-web
+      #- stremio-web
     profiles:
       - all
       - streaming
@@ -64,28 +64,24 @@ services:
       - ./services/jellyfin/cache:/cache
     restart: unless-stopped
 
+
   stremio-web:
     container_name: stremio-web
     image: stremio-web:latest
     profiles:
       - all
       - streaming
-    build:
-      context: .
-      dockerfile: services/stremio-web/Dockerfile
-      cache_from:
-        - stremio-web:latest
-    networks:
-      - internal
+    environment:
+      - NODE_ENV=production
     #ports:
     #  - "8081:8080"  # Remove when running trough nginx
+    build:
+      context: ./services/stremio-web/stremio-web
+      dockerfile: Dockerfile
+    networks:
+      - internal
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080"]
-      interval: 1m
-      timeout: 10s
-      retries: 3
-  
+
   stremio-server:
     image: stremio/server:latest
     container_name: stremio-server
@@ -126,9 +122,9 @@ services:
     image: linuxserver/radarr
     container_name: radarr
     profiles:
+      - all
       - install
     networks:
-      - all
       - internal
     ports:
       - "7878:7878"
@@ -146,8 +142,8 @@ services:
     container_name: sonarr
     profiles:
       - install
-    networks:
       - all
+    networks:
       - internal
     ports:
       - "8989:8989"
@@ -165,8 +161,8 @@ services:
     container_name: bazarr
     profiles:
       - install
-    networks:
       - all
+    networks:
       - internal
     ports:
       - "6767:6767"
@@ -184,8 +180,8 @@ services:
     container_name: jackett
     profiles:
       - install
-    networks:
       - all
+    networks:
       - internal
     ports:
       - "9117:9117"
@@ -201,6 +197,7 @@ services:
     image: crazymax/fail2ban
     container_name: fail2ban
     profiles:
+      - all
       - install
       - streaming
     network_mode: host

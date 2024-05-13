@@ -25,7 +25,7 @@ Use container names instead of IPs, for example, `http://nameofcontainer:port`.
 1. **Clone the Repository**
 
 ```bash
-   git clone https://github.com/Jallunator/MyMovieDocker.git
+   git clone --recurse-submodules https://github.com/Jallunator/MyMovieDocker.git
    cd MyMovieDocker
 ```
 
@@ -36,7 +36,6 @@ Use container names instead of IPs, for example, `http://nameofcontainer:port`.
 
 3. **Start the Services**
 ```bash
-docker compose up -d
 docker compose up --build -d
 ```
 
