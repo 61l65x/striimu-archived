@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Define profiles
-declare -a profiles=("streaming" "watching" "install" "other")
+declare -a profiles=("streaming" "install")
 
 # Display profiles to user
 echo "Available profiles:"
 for i in "${!profiles[@]}"; do
   echo "$((i+1)). ${profiles[$i]}"
 done
-echo "5. All"
+echo "3. All"
 
 # Prompt for profile choice
-echo "Enter the numbers of the profiles you want to start (comma-separated), or '5' for all:"
+echo "Enter the numbers of the profiles you want to start (comma-separated), or '3' for all:"
 read -p "Input: " input
 
 # Process input
@@ -19,8 +19,8 @@ IFS=',' read -ra choices <<< "$input"
 selected_profiles=()
 
 for choice in "${choices[@]}"; do
-  if [[ "$choice" -eq 5 ]]; then
-    selected_profiles=("streaming" "watching" "install" "other")
+  if [[ "$choice" -eq 3 ]]; then
+    selected_profiles=("all")
     break
   elif ((choice > 0 && choice <= ${#profiles[@]})); then
     selected_profiles+=("${profiles[$((choice-1))]}")
@@ -33,7 +33,7 @@ done
 # Start selected profiles
 for profile in "${selected_profiles[@]}"; do
   echo "Starting $profile..."
-  docker-compose --profile "$profile" up -d
+  docker compose --profile "$profile" up -d
 done
 
 # Ask for monitoring window
@@ -43,7 +43,7 @@ if [[ "$monitor_answer" == "y" ]]; then
     tmux new-session -d -s docker_monitor
     tmux split-window -h
     tmux select-pane -t 0
-    tmux send-keys "docker compose logs --follow --timestamps | ccze -A" C-m
+    tmux send-keys "docker compose --profile $profile logs --follow --timestamps | ccze -A" C-m
     tmux select-pane -t 1
     tmux split-window -v
     tmux select-pane -t 2
