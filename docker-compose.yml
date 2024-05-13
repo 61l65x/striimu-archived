@@ -10,7 +10,11 @@ services:
   nginx:
     image: nginx
     container_name: nginx
+    depends_on:
+      - jellyfin
+      - stremio-web
     profiles:
+      - all
       - streaming
       - install
     networks:
@@ -20,8 +24,9 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/server.crt:/etc/nginx/server.crt
-      - ./nginx/server.key:/etc/nginx/server.key
+      - ./nginx/proxy_params.conf:/etc/nginx/proxy_params.conf
+      - ./nginx/ssl/server.crt:/etc/nginx/server.crt
+      - ./nginx/ssl/server.key:/etc/nginx/server.key
     restart: unless-stopped
 
   rdtclient:
@@ -30,6 +35,7 @@ services:
     networks:
       - internal
     profiles:
+      - all
       - install
     volumes:
       - ./media-downloads:/data/downloads
@@ -46,11 +52,12 @@ services:
     image: jellyfin/jellyfin
     container_name: jellyfin
     profiles:
+      - all
       - install
     networks:
       - internal
-    ports:
-      - "8096:8096" # Remove when running through nginx
+    #ports:
+    #  - "8096:8096" # Remove when running through nginx
     volumes:
       - ./shared-media-downloads:/downloads
       - ./services/jellyfin/config:/config
@@ -61,6 +68,7 @@ services:
     container_name: stremio-web
     image: stremio-web:latest
     profiles:
+      - all
       - streaming
     build:
       context: .
@@ -69,15 +77,23 @@ services:
         - stremio-web:latest
     networks:
       - internal
-    ports:
-      - "8081:8080"  # Remove when running trough nginx
+    #ports:
+    #  - "8081:8080"  # Remove when running trough nginx
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
   
   stremio-server:
     image: stremio/server:latest
     container_name: stremio-server
     profiles:
+      - all
       - streaming
+    networks:
+      - internal
     ports:
       - "11470:11470"
     volumes:
@@ -88,6 +104,7 @@ services:
     image: linuxserver/qbittorrent
     container_name: qbittorrent
     profiles:
+      - all
       - install
     networks:
       - internal
@@ -111,6 +128,7 @@ services:
     profiles:
       - install
     networks:
+      - all
       - internal
     ports:
       - "7878:7878"
@@ -129,6 +147,7 @@ services:
     profiles:
       - install
     networks:
+      - all
       - internal
     ports:
       - "8989:8989"
@@ -147,6 +166,7 @@ services:
     profiles:
       - install
     networks:
+      - all
       - internal
     ports:
       - "6767:6767"
@@ -165,6 +185,7 @@ services:
     profiles:
       - install
     networks:
+      - all
       - internal
     ports:
       - "9117:9117"
