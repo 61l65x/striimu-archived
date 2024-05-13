@@ -31,6 +31,8 @@ echo "  a) Start Streaming Services: 'docker compose --profile streaming up -d'"
 echo "  b) Stop Streaming Services: 'docker compose --profile streaming down'"
 echo "  c) Start Install Services: 'docker compose --profile install up -d'"
 echo "  d) Stop Install Services: 'docker compose --profile install down'"
+echo "  e) Start All Services: 'docker compose --profile all up -d'"
+echo "  f) Stop All Services: 'docker compose --profile all down'"
 echo ""
 
 # Utility Commands
@@ -42,6 +44,17 @@ echo "  iv) Start a specific container: 'docker start [container_id or name]'"
 echo ""
 
 # Additional Information
-echo -e "${GREEN}For detailed service status, use: 'docker compose ps'${NC}"
+echo -e "${GREEN}Additional Information:${NC}"
+echo -e "   ${GREEN} 1. Add following row to /etc/sudoers for the monitoring script to work !${NC}" 
+echo -e "       ${GREEN}username ALL=(ALL) NOPASSWD: /usr/sbin/iftop, /usr/bin/lsof${NC}"
 echo ""
-echo -e "${RED}Note: Always ensure Docker is correctly installed and configured on your system.${NC}"
+echo -e "   ${RED}Note: Always ensure Docker is correctly installed and configured on your system.${NC}"
+
+
+echo ""
+echo ""
+echo ""
+echo -e "${GREEN}PRESS ENTER TO CONTINUE ${NC}"
+echo ""
+echo ""
+read -p ""

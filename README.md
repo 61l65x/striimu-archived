@@ -35,8 +35,14 @@ Use container names instead of IPs, for example, `http://nameofcontainer:port`.
 + + SSL certificates if https ( not necessary needed if not in public network )
 
 3. **Start the Services**
+
++  **Services are controlled with profiles**
++ **Profiles:** all, streaming, install
 ```bash
-docker compose up --build -d
+# Run the starting script ( Recomended )
+./scripts/start_and_monitor_all.sh
+# Or specify the profile 
+docker compose --profile all up --build -d
 ```
 
 ## Access the Services

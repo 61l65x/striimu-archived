@@ -5,7 +5,6 @@ networks:
     name: internal
     driver: bridge
 
-
 services:
   nginx:
     image: nginx
