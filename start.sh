@@ -17,7 +17,7 @@ function monitor_window()
   if [[ "$monitor_answer" != "y" ]]; then
       exit 0
   fi
-  $interface = iw dev | grep Interface | awk '{print $2}'
+  interface=$(iw dev | grep Interface | awk '{print $2}')
   tmux new-session -d -s docker_monitor
   tmux split-window -h
   tmux select-pane -t 0
