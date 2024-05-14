@@ -9,12 +9,19 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve the application with Nginx
-FROM nginx:stable-alpine AS production-stage
+# Stage 2: Serve the application with a custom Express server
+FROM node:14-alpine
 
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY mime.types /etc/nginx/mime.types
+WORKDIR /app
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Copy the build artifacts from the build stage
+COPY --from=build-stage /app/dist /app/dist
+
+# Copy the server script
+COPY server.js /app
+
+# Install dependencies required for the server
+RUN npm install express
+
+EXPOSE 8080
+CMD ["node", "server.js"]

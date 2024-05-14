@@ -41,10 +41,10 @@ services:
     build:
       context: ./striimu-ui-auth/frontend
       dockerfile: Dockerfile
-    volumes:
-      - ./striimu-ui-auth/frontend:/usr/share/nginx/html
-    depends_on:
-      - backend
+    environment:
+      - NODE_ENV=production
+    #ports:
+    #  - "6500:80"
     networks:
       - internal
     restart: unless-stopped
@@ -52,3 +52,5 @@ services:
       - all
       - streaming
       - install
+    expose:
+      - 8080

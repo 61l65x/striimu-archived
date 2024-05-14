@@ -1,25 +1,24 @@
-import Vue from 'vue';
-import Router from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 
-Vue.use(Router);
+const routes = [
+  {
+    path: '/',
+    name: 'HomeView',
+    component: HomeView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/login',
+    name: 'LoginView',
+    component: LoginView
+  }
+];
 
-const router = new Router({
-  mode: 'history',
-  routes: [
-    {
-      path: '/',
-      name: 'HomeView',
-      component: HomeView,
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/login',
-      name: 'LoginView',
-      component: LoginView
-    }
-  ]
+const router = createRouter({
+  history: createWebHistory('/frontend/'), // Set the base URL here
+  routes
 });
 
 router.beforeEach((to, from, next) => {

@@ -21,7 +21,7 @@ def check_token():
 @app.route('/login', methods=['POST'])
 def login():
     # Implement your login logic here
-    pass
+    return jsonify({"message": "Login logic not implemented"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
