@@ -1,6 +1,4 @@
-# File: toplevel-ui/docker-compose.yml
-
-version: '3.8'
+# File: striimu-ui-auth/docker-compose.yml
 
 networks:
   internal:
@@ -9,10 +7,10 @@ networks:
 services:
   auth-service:
     build:
-      context: ./auth-service
+      context: ./striimu-ui-auth/auth-service
       dockerfile: Dockerfile
     volumes:
-      - ./auth-service:/app
+      - ./striimu-ui-auth/auth-service:/app
     environment:
       - NODE_ENV=production
     networks:
@@ -25,10 +23,10 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./striimu-ui-auth/backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/app
+      - ./striimu-ui-auth/backend:/app
     environment:
       - FLASK_ENV=development
     networks:
@@ -41,10 +39,10 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./striimu-ui-auth/frontend
       dockerfile: Dockerfile
     volumes:
-      - ./frontend:/usr/share/nginx/html
+      - ./striimu-ui-auth/frontend:/usr/share/nginx/html
     depends_on:
       - backend
     networks:

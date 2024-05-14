@@ -7,7 +7,7 @@ networks:
 
 services:
   nginx:
-    image: nginx
+    image: nginx:latest
     container_name: nginx
     profiles:
       - all
@@ -19,10 +19,12 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      - ./nginx/mime.types:/etc/nginx/mime.types
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/proxy_params.conf:/etc/nginx/proxy_params.conf
-      - ./nginx/ssl/server.crt:/etc/nginx/server.crt
-      - ./nginx/ssl/server.key:/etc/nginx/server.key
+      - ./nginx/certs/server.crt:/etc/nginx/
+      - ./nginx/certs/server.key:/etc/nginx/
+      #- ./nginx/certs:/etc/nginx
     restart: unless-stopped
 
   rdtclient:
@@ -34,7 +36,7 @@ services:
       - all
       - install
     volumes:
-      - ./media-downloads:/data/downloads
+      - ./shared-media-downloads:/data/downloads
       - ./services/rdt-client/db:/data/db
     restart: always
     logging:

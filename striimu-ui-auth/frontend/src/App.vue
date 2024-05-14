@@ -1,47 +1,13 @@
 <template>
-  <div>
-    <h1>Login</h1>
-    <form @submit.prevent="handleSubmit">
-      <div>
-        <label for="username">Username:</label>
-        <input id="username" v-model="loginDetails.username" required>
-      </div>
-      <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="loginDetails.password" required>
-      </div>
-      <div>
-        <input type="checkbox" id="admin" v-model="isAdmin">
-        <label for="admin">Login as Admin</label>
-      </div>
-      <div v-if="isAdmin">
-        <label for="sshKey">SSH Key:</label>
-        <textarea id="sshKey" v-model="loginDetails.sshKey"></textarea>
-      </div>
-      <button type="submit">Login</button>
-    </form>
+  <div id="app">
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      isAdmin: false,
-      loginDetails: {
-        username: '',
-        password: '',
-        sshKey: ''
-      }
-    };
-  },
-  methods: {
-    handleSubmit() {
-      // Handle the login logic here
-      console.log(this.loginDetails);
-    }
-  }
-}
+  name: 'App'
+};
 </script>
 
 <style>
