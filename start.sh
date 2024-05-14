@@ -7,7 +7,7 @@ function docker_compose_up()
 {
     for profile in "${selected_profiles[@]}"; do
         echo "Starting $profile..."
-        docker compose -f docker-compose.yml -f striimu-ui-auth/docker-compose.yml --profile $profile up
+        docker compose -f docker-compose.yml -f striimu-ui-auth/docker-compose.yml --profile $profile up -d
     done
 }
 
