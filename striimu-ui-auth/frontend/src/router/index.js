@@ -5,10 +5,6 @@ import LoginView from '../views/LoginView.vue';
 const routes = [
   {
     path: '/',
-    redirect: '/home'
-  },
-  {
-    path: '/home',
     name: 'HomeView',
     component: HomeView,
     meta: { requiresAuth: true }
@@ -25,7 +21,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory('/frontend/'), // Set the base URL here
+  history: createWebHistory('/'), // Set the base URL to root
   routes
 });
 
