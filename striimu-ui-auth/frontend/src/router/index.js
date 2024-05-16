@@ -5,6 +5,10 @@ import LoginView from '../views/LoginView.vue';
 const routes = [
   {
     path: '/',
+    redirect: '/home'
+  },
+  {
+    path: '/home',
     name: 'HomeView',
     component: HomeView,
     meta: { requiresAuth: true }
@@ -13,6 +17,10 @@ const routes = [
     path: '/login',
     name: 'LoginView',
     component: LoginView
+  },
+  {
+    path: '/:catchAll(.*)',
+    redirect: '/login'
   }
 ];
 
@@ -21,26 +29,30 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem('token');
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!token) {
       next({ path: '/login' });
     } else {
-      fetch('/auth/validate', {
-        headers: {
-          'Authorization': token
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.valid) {
+      try {
+        const response = await fetch('/auth/validate', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        if (response.ok && data.valid) {
           next();
         } else {
+          localStorage.removeItem('token'); // Remove invalid token
           next({ path: '/login' });
         }
-      })
-      .catch(() => next({ path: '/login' }));
+      } catch (error) {
+        console.error('Token validation error:', error);
+        localStorage.removeItem('token'); // Remove invalid token
+        next({ path: '/login' });
+      }
     }
   } else {
     next();

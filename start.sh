@@ -15,7 +15,8 @@ function monitor_window()
 {
   read -p "Do you want to open the monitoring window? (y/n): " monitor_answer
   if [[ "$monitor_answer" != "y" ]]; then
-      exit 0
+    docker compose --profile $profile logs --follow --timestamps
+    exit 0
   fi
   interface=$(iw dev | grep Interface | awk '{print $2}')
   tmux new-session -d -s docker_monitor

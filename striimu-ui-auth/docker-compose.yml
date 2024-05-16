@@ -2,7 +2,8 @@
 
 networks:
   internal:
-    external: true
+    name: internal
+    driver: bridge
 
 services:
   auth-service:

@@ -15,6 +15,8 @@ services:
       - install
     networks:
       - internal
+    env_file:
+      - .env
     ports:
       - "80:80"
       - "443:443"
@@ -78,6 +80,8 @@ services:
       dockerfile: Dockerfile
     networks:
       - internal
+    volumes:
+      - /usr/bin/vlc:/usr/bin/vlc
     restart: unless-stopped
 
   stremio-server:
@@ -92,6 +96,7 @@ services:
       - "11470:11470"
     volumes:
       - ./services/stremio-server/server-storage:/root/.stremio-server
+      - /usr/bin/vlc:/usr/bin/vlc
     restart: unless-stopped
 
   qbittorrent:
