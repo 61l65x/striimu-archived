@@ -1,11 +1,21 @@
-FROM node:16
+# Use the official Python image from the Docker Hub
+FROM python:3.9-slim
 
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Create a directory for the app
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm install
+# Copy the requirements file into the image
+COPY requirements.txt /app/
 
-COPY . .
+# Install the dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 3000
-CMD ["node", "app.js"]
+# Copy the rest of the application code into the image
+COPY . /app/
+
+# Command to run the application
+CMD ["python", "auth_service.py"]

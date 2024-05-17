@@ -12,8 +12,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./striimu-ui-auth/auth-service:/app
-    environment:
-      - NODE_ENV=production
+    env_file:
+      - .env
     networks:
       - internal
     restart: unless-stopped
@@ -28,8 +28,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./striimu-ui-auth/backend:/app
-    environment:
-      - FLASK_ENV=development
+    env_file:
+      - .env
     networks:
       - internal
     restart: unless-stopped
