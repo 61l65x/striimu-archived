@@ -3,7 +3,8 @@
 networks:
   internal:
     name: internal
-    driver: bridge
+    #driver: bridge
+    external: true
 
 services:
   rdtclient:
