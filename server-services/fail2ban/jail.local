@@ -1,0 +1,86 @@
+[DEFAULT]
+bantime  = 1h
+findtime  = 10m
+maxretry = 5
+
+[nginx-http-auth]
+enabled  = true
+port     = http,https
+filter   = nginx-http-auth
+logpath  = /var/log/nginx/error.log
+
+[nginx-badbots]
+enabled  = true
+port     = http,https
+filter   = nginx-badbots
+logpath  = /var/log/nginx/access.log
+bantime  = 48h
+
+[qbittorrent]
+enabled  = true
+port     = 8080
+filter   = qbittorrent
+logpath  = /var/log/qbittorrent/qbittorrent.log
+maxretry = 10
+
+[radarr]
+enabled  = true
+port     = 7878
+filter   = radarr
+logpath  = /var/log/radarr/radarr.log
+maxretry = 10
+
+[sonarr]
+enabled  = true
+port     = 8989
+filter   = sonarr
+logpath  = /var/log/sonarr/sonarr.log
+maxretry = 10
+
+[bazarr]
+enabled  = true
+port     = 6767
+filter   = bazarr
+logpath  = /var/log/bazarr/bazarr.log
+
+[jackett]
+enabled  = true
+port     = 9117
+filter   = jackett
+logpath  = /var/log/jackett/jackett.log
+
+[stremio-web]
+enabled = true
+port    = 8081
+filter  = stremio
+logpath = /var/log/stremio-web/access.log
+maxretry = 5
+bantime = 3600
+findtime = 600
+
+[stremio-server]
+enabled = true
+port    = 11470
+filter  = stremio
+logpath = /var/log/stremio-server/access.log
+maxretry = 5
+bantime = 3600
+findtime = 600
+
+[stremio-jackett]
+enabled = true
+port    = 3000
+filter  = stremio-jackett
+logpath = /var/log/stremio-jackett/access.log
+maxretry = 5
+bantime = 3600
+findtime = 600
+
+[flaresolverr]
+enabled = true
+port    = 8191
+filter  = flaresolverr
+logpath = /var/log/flaresolverr/access.log
+maxretry = 5
+bantime = 3600
+findtime = 600

@@ -3,12 +3,17 @@
 # Define profiles
 declare -a profiles=("streaming" "install" "striimu")
 
-function docker_compose_up() {
+function docker_compose_up()
+{
+    echo "Starting services in server-services..."
+    (cd server-services && docker compose -f ./docker-compose.yml --profile all up -d)
     for profile in "${selected_profiles[@]}"; do
         echo "Starting $profile..."
+        echo "docker compose -f ./striimu-services/docker-compose.yml -f ./media-services/docker-compose.yml --profile $profile up -d"
         docker compose -f ./striimu-services/docker-compose.yml -f ./media-services/docker-compose.yml --profile $profile up -d
     done
 }
+
 function monitor_window()
 {
   read -p "Do you want to open the monitoring window? (y/n): " monitor_answer
@@ -69,6 +74,13 @@ function display_info()
 {
   ./assets/scripts/INFO.sh
 }
+
+function docker_clean_containers()
+{
+    docker stop $(docker ps -q)
+    docker rm $(docker ps -a -q)
+}
+
 
 # Main( )
 
