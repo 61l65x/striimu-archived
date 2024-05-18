@@ -1,0 +1,81 @@
+# File: striimu-services/docker-compose.yml
+
+networks:
+  internal:
+    name: internal
+    driver: bridge
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    profiles:
+      - all
+      - streaming
+      - install
+    networks:
+      - internal
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/mime.types:/etc/nginx/mime.types
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/proxy_params.conf:/etc/nginx/proxy_params.conf
+      - ./nginx/certs/server.crt:/etc/nginx/server.crt
+      - ./nginx/certs/server.key:/etc/nginx/server.key
+      #- ./nginx/certs:/etc/nginx
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    volumes:
+      - ./auth-service:/app
+    env_file:
+      - ./auth-service/.env
+    networks:
+      - internal
+    restart: unless-stopped
+    profiles:
+      - all
+      - streaming
+      - install
+      - striimu
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    networks:
+      - internal
+    restart: unless-stopped
+    profiles:
+      - all
+      - streaming
+      - install
+      - striimu
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+    #ports:
+    #  - "6500:80"
+    networks:
+      - internal
+    restart: unless-stopped
+    profiles:
+      - all
+      - streaming
+      - install
+      - striimu
+    expose:
+      - 8080
