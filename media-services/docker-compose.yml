@@ -16,8 +16,8 @@ services:
       - all
       - install
     volumes:
-      - ./shared-media-downloads:/data/downloads
-      - ./services/rdt-client/db:/data/db
+      - ${PWD}/shared-media-downloads:/data/downloads
+      - ${PWD}/services/rdt-client/db:/data/db
     restart: always
     logging:
       driver: json-file
@@ -37,9 +37,9 @@ services:
     #ports:
     #  - "8096:8096" # Remove when running through nginx
     volumes:
-      - ./shared-media-downloads:/downloads
-      - ./services/jellyfin/config:/config
-      - ./services/jellyfin/cache:/cache
+      - ${PWD}/shared-media-downloads:/downloads
+      - ${PWD}/services/jellyfin/config:/config
+      - ${PWD}/services/jellyfin/cache:/cache
     restart: unless-stopped
 
 
@@ -73,7 +73,7 @@ services:
     ports:
       - "11470:11470"
     volumes:
-      - ./services/stremio-server/server-storage:/root/.stremio-server
+      - ${PWD}/services/stremio-server/server-storage:/root/.stremio-server
       - /usr/bin/vlc:/usr/bin/vlc
     restart: unless-stopped
 
@@ -86,12 +86,12 @@ services:
     networks:
       - internal
     ports:
-      - "8080:8080" # Remove when running through nginx
+      - "8082:8080" # Remove when running through nginx
       - "6881:6881"
       - "6881:6881/udp"
     volumes:
-      - ./shared-media-downloads:/downloads
-      - ./services/qbittorrent/config/qbittorrent:/config
+      - ${PWD}/shared-media-downloads:/downloads
+      - ${PWD}/services/qbittorrent/config/qbittorrent:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -110,8 +110,8 @@ services:
     ports:
       - "7878:7878"
     volumes:
-      - ./shared-media-downloads:/downloads
-      - ./services/radarr/config/radarr:/config
+      - ${PWD}/shared-media-downloads:/downloads
+      - ${PWD}/services/radarr/config/radarr:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -129,8 +129,8 @@ services:
     ports:
       - "8989:8989"
     volumes:
-      - ./shared-media-downloads:/downloads
-      - ./services/sonarr/config/sonarr:/config
+      - ${PWD}/shared-media-downloads:/downloads
+      - ${PWD}/services/sonarr/config/sonarr:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -148,8 +148,8 @@ services:
     ports:
       - "6767:6767"
     volumes:
-      - ./shared-media-downloads:/downloads
-      - ./services/bazarr/config/bazarr:/config
+      - ${PWD}/shared-media-downloads:/downloads
+      - ${PWD}/services/bazarr/config/bazarr:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -167,7 +167,7 @@ services:
     ports:
       - "9117:9117"
     volumes:
-      - ./services/jackett/config/jackett:/config
+      - ${PWD}/services/jackett/config/jackett:/config
     environment:
       - PUID=1000
       - PGID=1000

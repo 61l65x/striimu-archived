@@ -4,16 +4,12 @@
       <h2>Login</h2>
       <form @submit.prevent="login">
         <div class="input-group">
-          <label for="username">Username</label>
-          <input v-model="username" type="text" id="username" placeholder="Enter your username" required />
+          <label for="email">Email</label>
+          <input v-model="username" type="email" id="email" placeholder="Enter your email" required />
         </div>
         <div class="input-group">
           <label for="key">Key</label>
           <input v-model="key" type="text" id="key" placeholder="Enter your key" required />
-        </div>
-        <div class="remember-me">
-          <input v-model="rememberMe" type="checkbox" id="rememberMe" />
-          <label for="rememberMe">Remember Me</label>
         </div>
         <button type="submit">Login</button>
       </form>
@@ -23,8 +19,8 @@
       <h2>Register</h2>
       <form @submit.prevent="register">
         <div class="input-group">
-          <label for="newUsername">Username</label>
-          <input v-model="newUsername" type="text" id="newUsername" placeholder="Enter a username" required />
+          <label for="newEmail">Email</label>
+          <input v-model="newUsername" type="email" id="newEmail" placeholder="Enter your email" required />
         </div>
         <div class="input-group">
           <label for="newPassword">Password</label>
@@ -37,6 +33,7 @@
   </div>
 </template>
 
+
 <script>
 export default {
   name: 'LoginView',
@@ -44,7 +41,6 @@ export default {
     return {
       username: '',
       key: '',
-      rememberMe: false,
       showRegister: false,
       newUsername: '',
       newPassword: '',
@@ -63,11 +59,6 @@ export default {
         const data = await response.json();
         if (data.token) {
           localStorage.setItem('token', data.token);
-          if (this.rememberMe) {
-            localStorage.setItem('rememberMe', 'true');
-          } else {
-            localStorage.removeItem('rememberMe');
-          }
           this.$router.push('/'); // Redirect to home
         } else {
           alert(data.message);
@@ -87,7 +78,7 @@ export default {
         });
         const data = await response.json();
         if (response.ok) {
-          alert(`Registration successful! Your key: ${data.key}`);
+          alert(`Registration successful! Please check your email to confirm registration.`);
           this.showRegister = false;
         } else {
           alert(data.message);
@@ -96,9 +87,6 @@ export default {
         console.error('Error:', error);
       }
     },
-    skipLogin() {
-      this.$router.push('/');
-    }
   }
 };
 </script>

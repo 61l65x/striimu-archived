@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app/
 
 # Command to run the application
-CMD ["python", "auth_service.py"]
+CMD ["python", "app.py"]

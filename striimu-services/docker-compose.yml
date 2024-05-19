@@ -12,9 +12,9 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/app
+      - ${PWD}/backend:/app
     env_file:
-      - ./backend/.env
+      - ${PWD}/backend/.env
     networks:
       - internal
     restart: unless-stopped
