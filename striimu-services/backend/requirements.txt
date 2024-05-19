@@ -1,9 +1,4 @@
-blinker
-click
 Flask
-itsdangerous
-Jinja2
-MarkupSafe
+Flask-Cors
 PyJWT
-Werkzeug
-requests
+python-dotenv

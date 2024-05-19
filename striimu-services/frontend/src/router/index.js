@@ -25,33 +25,39 @@ const router = createRouter({
   routes
 });
 
+const isDevelopmentMode = true; // Set this to false to enable authentication checks
+
 router.beforeEach(async (to, from, next) => {
-  const token = localStorage.getItem('token');
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!token) {
-      next({ path: '/login' });
-    } else {
-      try {
-        const response = await fetch('/auth/validate', {
-          headers: {
-            'Authorization': `Bearer ${token}`
+  if (isDevelopmentMode) {
+    next(); // Bypass authentication in development mode
+  } else {
+    const token = localStorage.getItem('token');
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (!token) {
+        next({ path: '/login' });
+      } else {
+        try {
+          const response = await fetch('/auth/validate', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const data = await response.json();
+          if (response.ok && data.valid) {
+            next();
+          } else {
+            localStorage.removeItem('token'); // Remove invalid token
+            next({ path: '/login' });
           }
-        });
-        const data = await response.json();
-        if (response.ok && data.valid) {
-          next();
-        } else {
+        } catch (error) {
+          console.error('Token validation error:', error);
           localStorage.removeItem('token'); // Remove invalid token
           next({ path: '/login' });
         }
-      } catch (error) {
-        console.error('Token validation error:', error);
-        localStorage.removeItem('token'); // Remove invalid token
-        next({ path: '/login' });
       }
+    } else {
+      next();
     }
-  } else {
-    next();
   }
 });
 

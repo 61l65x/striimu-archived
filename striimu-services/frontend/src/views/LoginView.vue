@@ -8,8 +8,8 @@
           <input v-model="username" type="text" id="username" placeholder="Enter your username" required />
         </div>
         <div class="input-group">
-          <label for="password">Password</label>
-          <input v-model="password" type="password" id="password" placeholder="Enter your password" required />
+          <label for="key">Key</label>
+          <input v-model="key" type="text" id="key" placeholder="Enter your key" required />
         </div>
         <div class="remember-me">
           <input v-model="rememberMe" type="checkbox" id="rememberMe" />
@@ -17,6 +17,22 @@
         </div>
         <button type="submit">Login</button>
       </form>
+      <button @click="showRegister = true" class="register-button">Register</button>
+    </div>
+    <div v-if="showRegister" class="register-box">
+      <h2>Register</h2>
+      <form @submit.prevent="register">
+        <div class="input-group">
+          <label for="newUsername">Username</label>
+          <input v-model="newUsername" type="text" id="newUsername" placeholder="Enter a username" required />
+        </div>
+        <div class="input-group">
+          <label for="newPassword">Password</label>
+          <input v-model="newPassword" type="password" id="newPassword" placeholder="Enter a password" required />
+        </div>
+        <button type="submit">Register</button>
+      </form>
+      <button @click="showRegister = false" class="cancel-button">Cancel</button>
     </div>
   </div>
 </template>
@@ -27,19 +43,22 @@ export default {
   data() {
     return {
       username: '',
-      password: '',
+      key: '',
       rememberMe: false,
+      showRegister: false,
+      newUsername: '',
+      newPassword: '',
     };
   },
   methods: {
     async login() {
       try {
-        const response = await fetch('/auth/login', {
+        const response = await fetch('http://localhost:3000/auth/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ username: this.username, password: this.password })
+          body: JSON.stringify({ username: this.username, key: this.key })
         });
         const data = await response.json();
         if (data.token) {
@@ -51,40 +70,70 @@ export default {
           }
           this.$router.push('/'); // Redirect to home
         } else {
-          alert('Invalid username or password');
+          alert(data.message);
         }
       } catch (error) {
         console.error('Error:', error);
       }
+    },
+    async register() {
+      try {
+        const response = await fetch('http://localhost:3000/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username: this.newUsername, password: this.newPassword })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert(`Registration successful! Your key: ${data.key}`);
+          this.showRegister = false;
+        } else {
+          alert(data.message);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    },
+    skipLogin() {
+      this.$router.push('/');
     }
   }
 };
 </script>
 
 <style scoped>
+html, body, #app {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* Prevent scrolling */
+}
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  /*background-image: url('@/assets/background.jpg'); Change the path to your background image 
-  background-size: cover;
-  background-position: center;*/
+  width: 100vw;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.login-box {
-  background: rgba(255, 255, 255, 0.9);
+.login-box, .register-box {
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.042);
   text-align: center;
   max-width: 400px;
   width: 100%;
+  background-color: #300A24;
 }
 
 h2 {
   margin-bottom: 20px;
-  color: #333;
+  color: #ffffff;
 }
 
 .input-group {
@@ -95,7 +144,7 @@ h2 {
 .input-group label {
   display: block;
   margin-bottom: 5px;
-  color: #666;
+  color: #ffffff;
 }
 
 .input-group input {
@@ -120,13 +169,31 @@ button {
   padding: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #3498db;
+  background-color: #451438;
   color: white;
   font-size: 16px;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #2980b9;
+  background-color: #5e1d50;
+}
+
+.register-button {
+  margin-top: 15px;
+  background-color: #451438;
+}
+
+.register-button:hover {
+  background-color: #5e1d50;
+}
+
+.cancel-button {
+  margin-top: 15px;
+  background-color: #e74c3c;
+}
+
+.cancel-button:hover {
+  background-color: #c0392b;
 }
 </style>

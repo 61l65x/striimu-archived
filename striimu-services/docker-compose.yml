@@ -7,23 +7,6 @@ networks:
     external: true
 
 services:
-  auth-service:
-    build:
-      context: ./auth-service
-      dockerfile: Dockerfile
-    volumes:
-      - ./auth-service:/app
-    env_file:
-      - ./auth-service/.env
-    networks:
-      - internal
-    restart: unless-stopped
-    profiles:
-      - all
-      - streaming
-      - install
-      - striimu
-
   backend:
     build:
       context: ./backend

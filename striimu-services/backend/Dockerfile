@@ -1,14 +1,21 @@
-FROM python:3.8
+# Use the official Python image from the Docker Hub
+FROM python:3.9-slim
 
-# Set the working directory
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Create a directory for the app
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy the requirements file into the image
+COPY requirements.txt /app/
 
+# Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy the rest of the application code into the image
+COPY . /app/
 
-EXPOSE 5000
-
-CMD ["python3", "app.py"]
+# Command to run the application
+CMD ["python", "auth_service.py"]
