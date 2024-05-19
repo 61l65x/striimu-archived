@@ -10,6 +10,7 @@ ROOT_DIR=$(pwd)
 function docker_compose_up() {
     echo "Starting services in server-services..."
     (cd server-services && docker compose -f docker-compose.yml --profile all up -d)
+
     for profile in "${selected_profiles[@]}"; do
         echo "Starting $profile..."
         (cd striimu-services && docker compose -f docker-compose.yml --profile $profile up -d)
