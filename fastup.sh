@@ -1,20 +1,21 @@
 #!/bin/bash
 
 # Define profiles
-declare -a profiles=("streaming" "install" "striimu" "server")
+declare -a profiles=("streaming" "install" "striimu")
 
 # Get the current working directory
 ROOT_DIR=$(pwd)
 
 # Function to start Docker Compose services
-function docker_compose_up() {
+function docker_compose_up()
+{
     for profile in "${selected_profiles[@]}"; do
         echo "Starting $profile..."
-        $(docker compose -f ${ROOT_DIR}/docker-compose.yml \
+        docker compose -f ${ROOT_DIR}/docker-compose.yml \
         -f ${ROOT_DIR}/server-services/docker-compose.yml \
         -f ${ROOT_DIR}/media-services/docker-compose.yml \
         -f ${ROOT_DIR}/striimu-services/docker-compose.yml \
-        --profile $profile up)
+        --profile $profile up -d
     done
 }
 
@@ -30,11 +31,7 @@ function monitor_window() {
     tmux new-session -d -s docker_monitor
     tmux split-window -h
     tmux select-pane -t 0
-    tmux send-keys "docker compose  -f ${ROOT_DIR}/docker-compose.yml \
-                                    -f ${ROOT_DIR}/server-services/docker-compose.yml \
-                                    -f ${ROOT_DIR}/media-services/docker-compose.yml \
-                                    -f ${ROOT_DIR}/striimu-services/docker-compose.yml \
-                                    --profile $profile logs --follow --timestamps | ccze -A" C-m
+    tmux send-keys "docker compose -f ${ROOT_DIR}/striimu-services/docker-compose.yml -f ${ROOT_DIR}/media-services/docker-compose.yml --profile $profile logs --follow --timestamps | ccze -A" C-m
     tmux select-pane -t 1
     tmux send-keys "sudo iftop -i $interface" C-m
     tmux split-window -v
@@ -56,14 +53,14 @@ function get_profile_choices() {
     for i in "${!profiles[@]}"; do
         echo "$((i+1)). ${profiles[$i]}"
     done
-    echo "5. All"
+    echo "4. All"
     echo "Enter the numbers of the profiles you want to start (comma-separated), or '4' for all:"
     read -p "Input: " input
     IFS=',' read -ra choices <<< "$input"
     selected_profiles=()
 
     for choice in "${choices[@]}"; do
-        if [[ "$choice" -eq 5 ]]; then
+        if [[ "$choice" -eq 4 ]]; then
             selected_profiles=("all")
             break
         elif ((choice > 0 && choice <= ${#profiles[@]})); then
@@ -81,57 +78,19 @@ function display_info() {
     ./assets/scripts/INFO.sh
 }
 
+# Function to clean Docker containers
 function docker_clean_containers() {
     docker stop $(docker ps -q)
     docker rm $(docker ps -a -q)
 }
 
-function stop_all_containers() {
-    docker stop $(docker ps -q)
-}
-
-
 # Main function
 function main() {
-    while true; do
-        CHOICE=$(whiptail --title "Main Menu" --menu "Choose an action" 15 60 6 \
-        "1" "Display Information" \
-        "2" "Clean Docker Containers" \
-        "3" "Compose Up with Profiles" \
-        "4" "Stop All Containers" \
-        "5" "Open Monitor Window" \
-        "6" "re Build all images" \
-        "7" "Exit" 3>&1 1>&2 2>&3)
-
-        case $CHOICE in
-            1)
-                display_info
-                ;;
-            2)
-                docker_clean_containers
-                ;;
-            3)
-                docker_compose_up
-                ;;
-            4)
-                stop_all_containers
-                ;;
-            5)
-                monitor_window
-                ;;
-            6)
-                monitor_window
-            
-            7)
-                exit 0
-                ;;
-            *)
-                echo "Invalid choice"
-                ;;
-        esac
-    done
+    display_info
+    get_profile_choices
+    docker_compose_up
+    monitor_window
 }
 
 # Run the main function
 main
-
