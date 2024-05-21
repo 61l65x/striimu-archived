@@ -4,11 +4,13 @@
 **media/
 **downloads/
 **/db/
+**/logs/
 
 # Ignore SSL certificates
 *.crt
 *.key
 *.csr
+*.log
 
 # Ignore Docker artifacts
 docker-compose.override.yml

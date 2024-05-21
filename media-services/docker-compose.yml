@@ -16,8 +16,8 @@ services:
       - all
       - install
     volumes:
-      - ${PWD}/shared-media-downloads:/data/downloads
-      - ${PWD}/services/rdt-client/db:/data/db
+      - ./media-services/shared-media-downloads:/data/downloads
+      - ./media-services/services/rdt-client/db:/data/db
     restart: always
     logging:
       driver: json-file
@@ -37,9 +37,9 @@ services:
     #ports:
     #  - "8096:8096" # Remove when running through nginx
     volumes:
-      - ${PWD}/shared-media-downloads:/downloads
-      - ${PWD}/services/jellyfin/config:/config
-      - ${PWD}/services/jellyfin/cache:/cache
+      -  ./media-services/shared-media-downloads:/downloads
+      -  ./media-services/services/jellyfin/config:/config
+      -  ./media-services/services/jellyfin/cache:/cache
     restart: unless-stopped
 
 
@@ -54,7 +54,7 @@ services:
     #ports:
     #  - "8081:8080"  # Remove when running trough nginx
     build:
-      context: ./services/stremio-web/stremio-web
+      context:  ./media-services/services/stremio-web/stremio-web
       dockerfile: Dockerfile
     networks:
       - internal
@@ -73,7 +73,7 @@ services:
     ports:
       - "11470:11470"
     volumes:
-      - ${PWD}/services/stremio-server/server-storage:/root/.stremio-server
+      - ./media-services/services/stremio-server/server-storage:/root/.stremio-server
       - /usr/bin/vlc:/usr/bin/vlc
     restart: unless-stopped
 
@@ -90,8 +90,8 @@ services:
       - "6881:6881"
       - "6881:6881/udp"
     volumes:
-      - ${PWD}/shared-media-downloads:/downloads
-      - ${PWD}/services/qbittorrent/config/qbittorrent:/config
+      -  ./media-services/shared-media-downloads:/downloads
+      -  ./media-services/services/qbittorrent/config/qbittorrent:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -110,8 +110,8 @@ services:
     ports:
       - "7878:7878"
     volumes:
-      - ${PWD}/shared-media-downloads:/downloads
-      - ${PWD}/services/radarr/config/radarr:/config
+      - ./media-services/shared-media-downloads:/downloads
+      - ./media-services/services/radarr/config/radarr:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -129,8 +129,8 @@ services:
     ports:
       - "8989:8989"
     volumes:
-      - ${PWD}/shared-media-downloads:/downloads
-      - ${PWD}/services/sonarr/config/sonarr:/config
+      - ./media-services/shared-media-downloads:/downloads
+      - ./media-services/services/sonarr/config/sonarr:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -148,8 +148,8 @@ services:
     ports:
       - "6767:6767"
     volumes:
-      - ${PWD}/shared-media-downloads:/downloads
-      - ${PWD}/services/bazarr/config/bazarr:/config
+      - ./media-services/shared-media-downloads:/downloads
+      - ./media-services/services/bazarr/config/bazarr:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -167,7 +167,7 @@ services:
     ports:
       - "9117:9117"
     volumes:
-      - ${PWD}/services/jackett/config/jackett:/config
+      - ./media-services/services/jackett/config/jackett:/config
     environment:
       - PUID=1000
       - PGID=1000

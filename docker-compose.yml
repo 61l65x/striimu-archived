@@ -1,0 +1,7 @@
+
+services: {}
+
+networks:
+  internal:
+    name: internal
+    external: true

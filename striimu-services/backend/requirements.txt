@@ -2,3 +2,6 @@ Flask
 Flask-Cors
 PyJWT
 python-dotenv
+flask-bcrypt
+flask-mail
+itsdangerous
