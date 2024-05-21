@@ -3,7 +3,6 @@
 networks:
   internal:
     name: internal
-    #driver: bridge
     external: true
 
 services:
@@ -13,6 +12,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./striimu-services/backend:/app
+      - ./striimu-services/backend/certs:/certs
     env_file:
       - ./striimu-services/backend/.env
     networks:
@@ -23,6 +23,8 @@ services:
       - streaming
       - install
       - striimu
+    expose:
+      - 3000
 
   frontend:
     build:
@@ -30,8 +32,6 @@ services:
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
-    #ports:
-    #  - "6500:80"
     networks:
       - internal
     restart: unless-stopped

@@ -60,6 +60,7 @@ services:
     domainname: striimu.com
     profiles:
       - all
+      - striimu
       - streaming
       - install
       - server
@@ -75,8 +76,8 @@ services:
       - ./server-services/docker-mailserver/mail-state/:/var/mail-state/
       - ./server-services/docker-mailserver/mail-logs/:/var/log/mail/
       - ./server-services/docker-mailserver/config/:/tmp/docker-mailserver/
+      - ./server-services/docker-mailserver/ssl:/tmp/docker-mailserver/ssl:ro
       - /etc/localtime:/etc/localtime:ro
-      - ./server-services/docker-mailserver/ssl:/tmp/docker-mailserver/ssl:ro  # Ensure this path matches the path where you generated the certificates
     restart: always
     stop_grace_period: 1m
     cap_add:
