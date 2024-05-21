@@ -15,7 +15,7 @@ function docker_compose_up()
         -f ${ROOT_DIR}/server-services/docker-compose.yml \
         -f ${ROOT_DIR}/media-services/docker-compose.yml \
         -f ${ROOT_DIR}/striimu-services/docker-compose.yml \
-        --profile $profile up -d
+        --profile $profile up
     done
 }
 
@@ -89,7 +89,7 @@ function main() {
     display_info
     get_profile_choices
     docker_compose_up
-    monitor_window
+    #monitor_window
 }
 
 # Run the main function

@@ -4,9 +4,9 @@
 declare -a profiles=("streaming" "install" "striimu" "server")
 ROOT_DIR=$(pwd)
 
-source ./scripts/docker_functions.sh
-source ./scripts/info.sh
-source ./scripts/monitor_functions.sh
+source ./assets/scripts/docker_functions.sh
+source ./assets/scripts/info.sh
+source ./assets/scripts/monitor_functions.sh
 
 
 # Main function

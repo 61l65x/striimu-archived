@@ -1,12 +1,7 @@
 #!/bin/bash
 
-function monitor_window() {
-    read -p "Do you want to open the monitoring window? (y/n): " monitor_answer
-    if [[ "$monitor_answer" != "y" ]]; then
-        docker compose --profile $profile logs --follow --timestamps
-        exit 0
-    fi
-
+function monitor_window()
+{
     interface=$(iw dev | grep Interface | awk '{print $2}')
     tmux new-session -d -s docker_monitor
     tmux split-window -h
