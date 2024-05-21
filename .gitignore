@@ -5,12 +5,15 @@
 **downloads/
 **/db/
 **/logs/
-
+**mail-logs/
+**mail-state/
+**ssl/
 # Ignore SSL certificates
 *.crt
 *.key
 *.csr
-*.log
+**.log
+
 
 # Ignore Docker artifacts
 docker-compose.override.yml
