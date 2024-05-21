@@ -28,4 +28,4 @@ docker-compose.override.yml
 **.db
 **stremio-cache
 
-*.env
+**.env
