@@ -100,30 +100,29 @@ export default {
       }
     },
     async register() {
-      try {
-        const response = await fetch('/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ 
-            username: this.newUsername, 
-            password: this.newPassword, 
-            captcha_text: this.captchaText, 
-            captcha_input: this.captchaInput 
-          })
-        });
-        const data = await response.json();
-        if (response.ok) {
-          this.registrationKey = data.key; // Show the registration key to the user
-          alert(`Registration successful!`);
-          this.showRegister = false;
-        } else {
-          alert(data.message);
-          if (data.message === 'Invalid CAPTCHA') {
-            this.fetchCaptcha(); // Fetch new CAPTCHA on failure
-          }
+    try {
+      const response = await fetch('/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          username: this.newUsername, 
+          password: this.newPassword, 
+          captcha_text: this.captchaText, 
+          captcha_input: this.captchaInput 
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('token', data.token); // Store the token after registration
+        this.$router.push('/'); // Redirect to home after registration
+      } else {
+        alert(data.message);
+        if (data.message === 'Invalid CAPTCHA') {
+          this.fetchCaptcha(); // Fetch new CAPTCHA on failure
         }
+      }
       } catch (error) {
         console.error('Error:', error);
       }

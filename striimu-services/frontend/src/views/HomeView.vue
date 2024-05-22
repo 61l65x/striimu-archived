@@ -16,14 +16,23 @@
       </div>
     </div>
     <p class="announcement">More features coming soon!</p>
+    <button @click="logout" class="logout-button">Logout</button>
   </div>
 </template>
+
 
 <script>
 export default {
   name: 'HomeView',
+  methods: {
+    logout() {
+      localStorage.removeItem('token'); // Remove the token from local storage
+      this.$router.push('/login'); // Redirect to the login page
+    }
+  }
 };
 </script>
+
 
 <style scoped>
 .home-container {
@@ -85,5 +94,20 @@ export default {
   margin-top: 30px;
   font-size: 18px;
   color: #e0e0e0;
+}
+
+.logout-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: #e74c3c;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
 }
 </style>

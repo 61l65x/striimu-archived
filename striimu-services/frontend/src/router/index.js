@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
-import ErrorView from '../views/ErrorView.vue';
+import ErrorView from '../views/ErrorView.vue'; // Ensure you have this view
 
 const routes = [
   {
@@ -24,10 +24,10 @@ const routes = [
         if (response.ok) {
           location.href = '/stremio-web/';
         } else {
-          next({ name: 'ErrorView' });
+          next({ name: 'ErrorView', params: { message: 'Stremio service is unavailable.' } });
         }
       } catch (error) {
-        next({ name: 'ErrorView' });
+        next({ name: 'ErrorView', params: { message: 'Stremio service is unavailable.' } });
       }
     }
   },
@@ -40,17 +40,18 @@ const routes = [
         if (response.ok) {
           location.href = '/jellyfin/';
         } else {
-          next({ name: 'ErrorView' });
+          next({ name: 'ErrorView', params: { message: 'Jellyfin service is unavailable.' } });
         }
       } catch (error) {
-        next({ name: 'ErrorView' });
+        next({ name: 'ErrorView', params: { message: 'Jellyfin service is unavailable.' } });
       }
     }
   },
   {
     path: '/error',
     name: 'ErrorView',
-    component: ErrorView
+    component: ErrorView,
+    props: true
   },
   {
     path: '/:catchAll(.*)',

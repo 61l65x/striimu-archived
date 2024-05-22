@@ -22,11 +22,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 JWT_SECRET = os.getenv('JWT_SECRET')
-MAIL_SERVER = os.getenv('MAIL_SERVER')
-MAIL_PORT = int(os.getenv('MAIL_PORT'))
-MAIL_USERNAME = os.getenv('MAIL_USERNAME')
-MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER')
 ADMIN_TOKEN = os.getenv('ADMIN_TOKEN')
 
 class User(db.Model):
@@ -95,9 +90,15 @@ def login():
 
 @app.route('/auth/validate', methods=['GET'])
 def validate_token():
-    token = request.headers.get('Authorization')
-    if not token:
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
         return jsonify({'message': 'No token provided'}), 401
+
+    if auth_header.startswith('Bearer '):
+        token = auth_header[7:]
+    else:
+        return jsonify({'message': 'Invalid token format'}), 401
+
     try:
         jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
         return jsonify({'valid': True})
@@ -109,8 +110,16 @@ def validate_token():
 @app.route('/admin/clean', methods=['POST'])
 def clean_db():
     token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({'message': 'No token provided'}), 401
+
+    # Extract token from "Bearer <token>"
+    if token.startswith('Bearer '):
+        token = token[7:]
+
     if token != ADMIN_TOKEN:
         return jsonify({'message': 'Unauthorized'}), 401
+
     db.drop_all()
     db.create_all()
     return jsonify({'message': 'Database cleaned successfully'}), 200
