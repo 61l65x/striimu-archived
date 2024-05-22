@@ -61,7 +61,7 @@ services:
     profiles:
       - all
       - striimu
-      - streaming
+      #- streaming
       - install
       - server
     env_file: ./server-services/docker-mailserver/mailserver.env

@@ -5,3 +5,5 @@ python-dotenv
 flask-bcrypt
 flask-mail
 itsdangerous
+Flask-SQLAlchemy
+captcha

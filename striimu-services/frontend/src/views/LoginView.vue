@@ -8,8 +8,14 @@
           <input v-model="username" type="email" id="email" placeholder="Enter your email" required />
         </div>
         <div class="input-group">
-          <label for="key">Key</label>
-          <input v-model="key" type="text" id="key" placeholder="Enter your key" required />
+          <label for="password">Password</label>
+          <input v-model="password" type="password" id="password" placeholder="Enter your password" required />
+        </div>
+        <div class="input-group">
+          <label for="captcha">CAPTCHA</label>
+          <input v-model="captchaInput" type="text" id="captcha" placeholder="Enter CAPTCHA" required />
+          <img :src="'data:image/png;base64,' + captchaImage" alt="CAPTCHA" />
+          <button type="button" @click="fetchCaptcha">Refresh CAPTCHA</button>
         </div>
         <button type="submit">Login</button>
       </form>
@@ -26,13 +32,21 @@
           <label for="newPassword">Password</label>
           <input v-model="newPassword" type="password" id="newPassword" placeholder="Enter a password" required />
         </div>
+        <div class="input-group">
+          <label for="newCaptcha">CAPTCHA</label>
+          <input v-model="captchaInput" type="text" id="newCaptcha" placeholder="Enter CAPTCHA" required />
+          <img :src="'data:image/png;base64,' + captchaImage" alt="CAPTCHA" />
+          <button type="button" @click="fetchCaptcha">Refresh CAPTCHA</button>
+        </div>
         <button type="submit">Register</button>
       </form>
+      <div v-if="registrationKey">
+        <p>Registration successful! Your key is: {{ registrationKey }}</p>
+      </div>
       <button @click="showRegister = false" class="cancel-button">Cancel</button>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -40,13 +54,23 @@ export default {
   data() {
     return {
       username: '',
-      key: '',
+      password: '',
       showRegister: false,
       newUsername: '',
       newPassword: '',
+      captchaText: '',
+      captchaInput: '',
+      captchaImage: '',
+      registrationKey: '',
     };
   },
   methods: {
+    async fetchCaptcha() {
+      const response = await fetch('/auth/captcha');
+      const data = await response.json();
+      this.captchaText = data.captcha_text;
+      this.captchaImage = data.captcha_image;
+    },
     async login() {
       try {
         const response = await fetch('/auth/login', {
@@ -54,7 +78,12 @@ export default {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ username: this.username, key: this.key })
+          body: JSON.stringify({ 
+            username: this.username, 
+            password: this.password, 
+            captcha_text: this.captchaText, 
+            captcha_input: this.captchaInput 
+          })
         });
         const data = await response.json();
         if (data.token) {
@@ -62,6 +91,9 @@ export default {
           this.$router.push('/'); // Redirect to home
         } else {
           alert(data.message);
+          if (data.message === 'Invalid CAPTCHA') {
+            this.fetchCaptcha(); // Fetch new CAPTCHA on failure
+          }
         }
       } catch (error) {
         console.error('Error:', error);
@@ -74,20 +106,32 @@ export default {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ username: this.newUsername, password: this.newPassword })
+          body: JSON.stringify({ 
+            username: this.newUsername, 
+            password: this.newPassword, 
+            captcha_text: this.captchaText, 
+            captcha_input: this.captchaInput 
+          })
         });
         const data = await response.json();
         if (response.ok) {
-          alert(`Registration successful! Please check your email to confirm registration.`);
+          this.registrationKey = data.key; // Show the registration key to the user
+          alert(`Registration successful!`);
           this.showRegister = false;
         } else {
           alert(data.message);
+          if (data.message === 'Invalid CAPTCHA') {
+            this.fetchCaptcha(); // Fetch new CAPTCHA on failure
+          }
         }
       } catch (error) {
         console.error('Error:', error);
       }
     },
-  }
+  },
+  created() {
+    this.fetchCaptcha();
+  },
 };
 </script>
 

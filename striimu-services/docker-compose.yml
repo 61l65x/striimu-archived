@@ -23,6 +23,8 @@ services:
       - streaming
       - install
       - striimu
+    ports:  # FOR DEBUG REMOVE IN PRODUCTION
+      - "3000:3000"
     expose:
       - 3000
 
@@ -40,5 +42,7 @@ services:
       - streaming
       - install
       - striimu
+    #ports:      FOR DEBUG REMOVE IN PRODUCTION
+    #  - "8080:8080"
     expose:
       - 8080
