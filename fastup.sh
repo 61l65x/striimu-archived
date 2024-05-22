@@ -15,7 +15,7 @@ function docker_compose_up()
         -f ${ROOT_DIR}/server-services/docker-compose.yml \
         -f ${ROOT_DIR}/media-services/docker-compose.yml \
         -f ${ROOT_DIR}/striimu-services/docker-compose.yml \
-        --profile $profile up
+        --profile $profile up --build
     done
 }
 

@@ -15,6 +15,16 @@ const routes = [
     component: LoginView
   },
   {
+    path: '/stremio-web',
+    name: 'StremioWeb',
+    beforeEnter() { location.href = '/stremio-web/'; } // Redirect to the Stremio web application
+  },
+  {
+    path: '/jellyfin',
+    name: 'Jellyfin',
+    beforeEnter() { location.href = '/jellyfin/'; } // Redirect to the Jellyfin media server
+  },
+  {
     path: '/:catchAll(.*)',
     redirect: '/login'
   }

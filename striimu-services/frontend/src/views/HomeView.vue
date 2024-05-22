@@ -3,14 +3,14 @@
     <h1>Welcome to the Home Page</h1>
     <div class="choices">
       <div class="choice-container">
-        <router-link to="/streaming" class="choice-link">
-          <img src="@/assets/striimu.webp" alt="Streaming" class="choice-image">
+        <router-link to="/stremio-web" class="choice-link">
+          <img src="@/assets/stremio_logo.jpg" alt="Streaming" class="choice-image">
           <div class="choice-header">Streaming</div>
         </router-link>
       </div>
       <div class="choice-container">
-        <router-link to="/library" class="choice-link">
-         <img src="@/assets/logo.png" alt="Library" class="choice-image">
+        <router-link to="/jellyfin" class="choice-link">
+          <img src="@/assets/jellyfin_logo.png" alt="Library" class="choice-image">
           <div class="choice-header">Watch from Library</div>
         </router-link>
       </div>
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: 'HomeView'
+  name: 'HomeView',
 };
 </script>
 
