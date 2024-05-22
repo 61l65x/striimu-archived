@@ -67,6 +67,8 @@ export default {
 
 .choice-image {
   width: 100%;
+  height: 200px; /* Set a fixed height for uniformity */
+  object-fit: cover; /* Ensure the image covers the area */
   height: auto;
 }
 

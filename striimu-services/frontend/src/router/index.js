@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
+import ErrorView from '../views/ErrorView.vue';
 
 const routes = [
   {
@@ -17,12 +18,39 @@ const routes = [
   {
     path: '/stremio-web',
     name: 'StremioWeb',
-    beforeEnter() { location.href = '/stremio-web/'; } // Redirect to the Stremio web application
+    beforeEnter: async (to, from, next) => {
+      try {
+        const response = await fetch('/stremio-web/');
+        if (response.ok) {
+          location.href = '/stremio-web/';
+        } else {
+          next({ name: 'ErrorView' });
+        }
+      } catch (error) {
+        next({ name: 'ErrorView' });
+      }
+    }
   },
   {
     path: '/jellyfin',
     name: 'Jellyfin',
-    beforeEnter() { location.href = '/jellyfin/'; } // Redirect to the Jellyfin media server
+    beforeEnter: async (to, from, next) => {
+      try {
+        const response = await fetch('/jellyfin/');
+        if (response.ok) {
+          location.href = '/jellyfin/';
+        } else {
+          next({ name: 'ErrorView' });
+        }
+      } catch (error) {
+        next({ name: 'ErrorView' });
+      }
+    }
+  },
+  {
+    path: '/error',
+    name: 'ErrorView',
+    component: ErrorView
   },
   {
     path: '/:catchAll(.*)',
