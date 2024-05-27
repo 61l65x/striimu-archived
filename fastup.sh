@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define profiles
-declare -a profiles=("streaming" "install" "striimu")
+declare -a profiles=("streaming" "install" "striimu" "server" "localdebug")
 
 # Get the current working directory
 ROOT_DIR=$(pwd)
@@ -12,10 +12,8 @@ function docker_compose_up()
     for profile in "${selected_profiles[@]}"; do
         echo "Starting $profile..."
         docker compose -f ${ROOT_DIR}/docker-compose.yml \
-        -f ${ROOT_DIR}/server-services/docker-compose.yml \
         -f ${ROOT_DIR}/media-services/docker-compose.yml \
-        -f ${ROOT_DIR}/striimu-services/docker-compose.yml \
-        --profile $profile up --build
+        --profile $profile up 
     done
 }
 
@@ -53,14 +51,14 @@ function get_profile_choices() {
     for i in "${!profiles[@]}"; do
         echo "$((i+1)). ${profiles[$i]}"
     done
-    echo "4. All"
-    echo "Enter the numbers of the profiles you want to start (comma-separated), or '4' for all:"
+    echo "6. All"
+    echo "Enter the numbers of the profiles you want to start (comma-separated), or '6' for all:"
     read -p "Input: " input
     IFS=',' read -ra choices <<< "$input"
     selected_profiles=()
 
     for choice in "${choices[@]}"; do
-        if [[ "$choice" -eq 4 ]]; then
+        if [[ "$choice" -eq 6 ]]; then
             selected_profiles=("all")
             break
         elif ((choice > 0 && choice <= ${#profiles[@]})); then
@@ -84,10 +82,21 @@ function docker_clean_containers() {
     docker rm $(docker ps -a -q)
 }
 
+function check_debug(){
+    if [[ " ${selected_profiles[@]} " =~ " localdebug " ]]; then
+        echo "Starting local debug mode... Remember run the back and front locally for debug!"
+        echo ""
+        docker compose -f ./docker-compose.yml -f ./server-services/docker-compose.yml\
+         -f ./media-services/docker-compose.yml  up nginx stremio-web
+        exit 0
+    fi
+}
+
 # Main function
 function main() {
     display_info
     get_profile_choices
+    check_debug
     docker_compose_up
     #monitor_window
 }

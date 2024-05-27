@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define profiles -- Global variables
-declare -a profiles=("streaming" "install" "striimu" "server")
+declare -a docker_compose_profiles=("streaming" "install" "striimu" "server")
 ROOT_DIR=$(pwd)
 
 source ./assets/scripts/docker_functions.sh

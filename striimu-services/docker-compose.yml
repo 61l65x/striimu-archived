@@ -13,6 +13,7 @@ services:
     volumes:
       - ./striimu-services/backend:/app
       - ./striimu-services/backend/certs:/certs
+      - /app/__pycache__  # Optional: to avoid caching issues
     env_file:
       - ./striimu-services/backend/.env
     networks:
@@ -33,7 +34,10 @@ services:
       context: ./striimu-services/frontend
       dockerfile: Dockerfile
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
+    volumes:
+      - ./striimu-services/frontend:/app
+      - /app/node_modules  # Avoid node_modules override
     networks:
       - internal
     restart: unless-stopped
@@ -42,7 +46,7 @@ services:
       - streaming
       - install
       - striimu
-    #ports:      FOR DEBUG REMOVE IN PRODUCTION
-    #  - "8080:8080"
+    ports:      # FOR DEBUG REMOVE IN PRODUCTION
+      - "8080:8080"
     expose:
       - 8080

@@ -6,7 +6,10 @@ import os
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 import uuid
-from peewee import *
+from flask_sqlalchemy import SQLAlchemy
+from captcha.image import ImageCaptcha
+import base64
+from io import BytesIO
 
 load_dotenv()
 
@@ -14,56 +17,55 @@ app = Flask(__name__)
 CORS(app)
 bcrypt = Bcrypt(app)
 
-# Ensure the database is in the current directory
-db = SqliteDatabase('users.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 JWT_SECRET = os.getenv('JWT_SECRET')
 ADMIN_TOKEN = os.getenv('ADMIN_TOKEN')
 
-class BaseModel(Model):
-    class Meta:
-        database = db
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    user_key = db.Column(db.String(36), unique=True, nullable=False)
 
-class User(BaseModel):
-    username = CharField(unique=True)
-    password = CharField()
-    user_key = CharField(unique=True)
+def generate_captcha():
+    image = ImageCaptcha()
+    captcha_text = str(uuid.uuid4())[:6]
+    data = image.generate(captcha_text)
+    image_data = base64.b64encode(data.getvalue()).decode('utf-8')
+    return captcha_text, image_data
 
-class EarlyAccessToken(BaseModel):
-    token = CharField(unique=True)
-    used = BooleanField(default=False)
-
-db.connect()
-db.create_tables([User, EarlyAccessToken])
+@app.route('/auth/captcha', methods=['GET'])
+def get_captcha():
+    captcha_text, image_data = generate_captcha()
+    return jsonify({'captcha_text': captcha_text, 'captcha_image': image_data})
 
 @app.route('/auth/register', methods=['POST'])
 def register():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    access_token = data.get('access_token')
+    captcha_text = data.get('captcha_text')
+    captcha_input = data.get('captcha_input')
 
-    if not username or not password or not access_token:
-        return jsonify({'message': 'Username, password, and access token are required'}), 400
-    if User.select().where(User.username == username).exists():
+    if not username or not password:
+        return jsonify({'message': 'Username and password are required'}), 400
+    if captcha_input != captcha_text:
+        return jsonify({'message': 'Invalid CAPTCHA'}), 400
+    if User.query.filter_by(username=username).first():
         return jsonify({'message': 'User already exists'}), 400
-
-    # Check if the access token is valid and not used
-    token_record = EarlyAccessToken.get_or_none(EarlyAccessToken.token == access_token, EarlyAccessToken.used == False)
-    if not token_record:
-        return jsonify({'message': 'Invalid or used access token'}), 400
-
+    
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     user_key = str(uuid.uuid4())
-    new_user = User.create(username=username, password=hashed_password, user_key=user_key)
-
-    # Mark the access token as used
-    token_record.used = True
-    token_record.save()
-
+    new_user = User(username=username, password=hashed_password, user_key=user_key)
+    db.session.add(new_user)
+    db.session.commit()
+    
     # Generate token
     token = jwt.encode({'username': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)}, JWT_SECRET, algorithm='HS256')
-
+    
     return jsonify({'message': 'User registered successfully', 'key': user_key, 'token': token}), 201
 
 @app.route('/auth/login', methods=['POST'])
@@ -71,14 +73,18 @@ def login():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
+    captcha_text = data.get('captcha_text')
+    captcha_input = data.get('captcha_input')
 
     if not username or not password:
         return jsonify({'message': 'Username and password are required'}), 400
-
-    user = User.get_or_none(User.username == username)
+    if captcha_input != captcha_text:
+        return jsonify({'message': 'Invalid CAPTCHA'}), 400
+    
+    user = User.query.filter_by(username=username).first()
     if not user or not bcrypt.check_password_hash(user.password, password):
         return jsonify({'message': 'Invalid username or password'}), 401
-
+    
     token = jwt.encode({'username': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)}, JWT_SECRET, algorithm='HS256')
     return jsonify({'token': token})
 
@@ -114,24 +120,11 @@ def clean_db():
     if token != ADMIN_TOKEN:
         return jsonify({'message': 'Unauthorized'}), 401
 
-    db.drop_tables([User, EarlyAccessToken])
-    db.create_tables([User, EarlyAccessToken])
+    db.drop_all()
+    db.create_all()
     return jsonify({'message': 'Database cleaned successfully'}), 200
 
-@app.route('/admin/generate-token', methods=['POST'])
-def generate_invitation_token():
-    token = request.headers.get('Authorization')
-    if not token or token != f"Bearer {ADMIN_TOKEN}":
-        return jsonify({'message': 'Unauthorized'}), 401
-
-    invite_token = str(uuid.uuid4())
-    new_token = EarlyAccessToken.create(token=invite_token)
-
-    return jsonify({'invite_token': invite_token})
-
 if __name__ == '__main__':
-    import os
-    print(f"Current working directory: {os.getcwd()}")
-    print(f"Database path: users.db")
-    
+    with app.app_context():
+        db.create_all()
     app.run(host='0.0.0.0', port=3000)

@@ -191,9 +191,46 @@ Project Root
 ```
 
 
+## Starting the Services
+
+All paths in the `docker-compose.yml` files are relative to the root folder. Ensure you start the services from the root folder.
+
+```sh
+# Navigate to the root folder
+cd ~/striimu
+# Start the Nginx service
+docker compose -f ./docker-compose.yml -f ./server-services/docker-compose.yml up -d nginx
+# Start other services as needed
+docker compose -f ./docker-compose.yml -f ./media-services/docker-compose.yml up -d
+```
+
+
 ```bash
 #IMPORTANT ! DOCKER MERGE COMPOSE
 Important
 
 When you use multiple Compose files, you must make sure all paths in the files are relative to the base Compose file (the first Compose file specified with -f). This is required because override files need not be valid Compose files. Override files can contain small fragments of configuration. Tracking which fragment of a service is relative to which path is difficult and confusing, so to keep paths easier to understand, all paths must be defined relative to the base file.
+```
+
+### Locally debugging with nginx 
+```bash
+
+# Start backend
+cd ~/striimu/striimu-services/backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py
+
+# Start frontend
+cd ~/striimu/striimu-services/frontend
+npm install
+npm run serve
+
+# Start any services that are included to the server!
+
+# Start Nginx with local debug configuration
+# Ensure nginx.local.debug.conf points to host instead of containers
+docker compose -f ./docker-compose.yml -f ./server-services/docker-compose.yml up nginx
+
 ```
