@@ -1,135 +1,103 @@
 <template>
-  <div class="login-container">
-    <div class="login-box">
-      <h2>Login</h2>
+  <div>
+    <div v-if="showRegister">
+      <form @submit.prevent="register">
+        <div class="input-group">
+          <label for="newUsername">Username</label>
+          <input v-model="newUsername" type="text" id="newUsername" required />
+        </div>
+        <div class="input-group">
+          <label for="newPassword">Password</label>
+          <input v-model="newPassword" type="password" id="newPassword" required />
+        </div>
+        <div class="input-group">
+          <label for="accessToken">Access Token</label>
+          <input v-model="accessToken" type="text" id="accessToken" required />
+        </div>
+        <button type="submit">Register</button>
+      </form>
+      <button @click="showRegister = false" class="cancel-button">Cancel</button>
+    </div>
+    <div v-else>
       <form @submit.prevent="login">
         <div class="input-group">
-          <label for="email">Email</label>
-          <input v-model="username" type="email" id="email" placeholder="Enter your email" required />
+          <label for="username">Username</label>
+          <input v-model="username" type="text" id="username" required />
         </div>
         <div class="input-group">
           <label for="password">Password</label>
-          <input v-model="password" type="password" id="password" placeholder="Enter your password" required />
-        </div>
-        <div class="input-group">
-          <label for="captcha">CAPTCHA</label>
-          <input v-model="captchaInput" type="text" id="captcha" placeholder="Enter CAPTCHA" required />
-          <img :src="'data:image/png;base64,' + captchaImage" alt="CAPTCHA" />
-          <button type="button" @click="fetchCaptcha">Refresh CAPTCHA</button>
+          <input v-model="password" type="password" id="password" required />
         </div>
         <button type="submit">Login</button>
       </form>
       <button @click="showRegister = true" class="register-button">Register</button>
     </div>
-    <div v-if="showRegister" class="register-box">
-      <h2>Register</h2>
-      <form @submit.prevent="register">
-        <div class="input-group">
-          <label for="newEmail">Email</label>
-          <input v-model="newUsername" type="email" id="newEmail" placeholder="Enter your email" required />
-        </div>
-        <div class="input-group">
-          <label for="newPassword">Password</label>
-          <input v-model="newPassword" type="password" id="newPassword" placeholder="Enter a password" required />
-        </div>
-        <div class="input-group">
-          <label for="newCaptcha">CAPTCHA</label>
-          <input v-model="captchaInput" type="text" id="newCaptcha" placeholder="Enter CAPTCHA" required />
-          <img :src="'data:image/png;base64,' + captchaImage" alt="CAPTCHA" />
-          <button type="button" @click="fetchCaptcha">Refresh CAPTCHA</button>
-        </div>
-        <button type="submit">Register</button>
-      </form>
-      <div v-if="registrationKey">
-        <p>Registration successful! Your key is: {{ registrationKey }}</p>
-      </div>
-      <button @click="showRegister = false" class="cancel-button">Cancel</button>
-    </div>
   </div>
 </template>
 
 <script>
+const apiBaseUrl = 'http://192.168.63.159:3000';
+
 export default {
   name: 'LoginView',
   data() {
     return {
       username: '',
       password: '',
-      showRegister: false,
       newUsername: '',
       newPassword: '',
-      captchaText: '',
-      captchaInput: '',
-      captchaImage: '',
-      registrationKey: '',
+      accessToken: '',
+      showRegister: false,
     };
   },
   methods: {
-    async fetchCaptcha() {
-      const response = await fetch('/auth/captcha');
-      const data = await response.json();
-      this.captchaText = data.captcha_text;
-      this.captchaImage = data.captcha_image;
-    },
     async login() {
       try {
-        const response = await fetch('/auth/login', {
+        const response = await fetch(`${apiBaseUrl}/auth/login`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ 
-            username: this.username, 
-            password: this.password, 
-            captcha_text: this.captchaText, 
-            captcha_input: this.captchaInput 
-          })
+          body: JSON.stringify({
+            username: this.username,
+            password: this.password,
+          }),
         });
         const data = await response.json();
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          this.$router.push('/'); // Redirect to home
+        if (response.ok) {
+          localStorage.setItem('token', data.token); // Store the token after login
+          this.$router.push('/'); // Redirect to home after login
         } else {
           alert(data.message);
-          if (data.message === 'Invalid CAPTCHA') {
-            this.fetchCaptcha(); // Fetch new CAPTCHA on failure
-          }
         }
       } catch (error) {
         console.error('Error:', error);
       }
     },
     async register() {
-    try {
-      const response = await fetch('/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          username: this.newUsername, 
-          password: this.newPassword, 
-          captcha_text: this.captchaText, 
-          captcha_input: this.captchaInput 
-        })
-      });
-      const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem('token', data.token); // Store the token after registration
-        this.$router.push('/'); // Redirect to home after registration
-      } else {
-        alert(data.message);
-        if (data.message === 'Invalid CAPTCHA') {
-          this.fetchCaptcha(); // Fetch new CAPTCHA on failure
+      try {
+        const response = await fetch(`${apiBaseUrl}/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: this.newUsername,
+            password: this.newPassword,
+            access_token: this.accessToken,
+          }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('token', data.token); // Store the token after registration
+          this.$router.push('/'); // Redirect to home after registration
+        } else {
+          alert(data.message);
         }
-      }
       } catch (error) {
         console.error('Error:', error);
       }
     },
-  },
-  created() {
-    this.fetchCaptcha();
   },
 };
 </script>

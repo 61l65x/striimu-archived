@@ -3,7 +3,15 @@ import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 import ErrorView from '../views/ErrorView.vue'; // Ensure you have this view
 
+const apiBaseUrl = 'http://192.168.63.159:3000';
+
 const routes = [
+  {
+    path: '',
+    name: 'HomeView',
+    component: HomeView,
+    meta: { requiresAuth: true }
+  },
   {
     path: '/',
     name: 'HomeView',
@@ -18,11 +26,12 @@ const routes = [
   {
     path: '/stremio-web',
     name: 'StremioWeb',
+    meta: { requiresAuth: true },
     beforeEnter: async (to, from, next) => {
       try {
-        const response = await fetch('/stremio-web/');
+        const response = await fetch(`${apiBaseUrl}/stremio-web/`);
         if (response.ok) {
-          location.href = '/stremio-web/';
+          location.href = `${apiBaseUrl}/stremio-web/`;
         } else {
           next({ name: 'ErrorView', params: { message: 'Stremio service is unavailable.' } });
         }
@@ -34,11 +43,12 @@ const routes = [
   {
     path: '/jellyfin',
     name: 'Jellyfin',
+    meta: { requiresAuth: true },
     beforeEnter: async (to, from, next) => {
       try {
-        const response = await fetch('/jellyfin/');
+        const response = await fetch(`${apiBaseUrl}/jellyfin/`);
         if (response.ok) {
-          location.href = '/jellyfin/';
+          location.href = `${apiBaseUrl}/jellyfin/`;
         } else {
           next({ name: 'ErrorView', params: { message: 'Jellyfin service is unavailable.' } });
         }
@@ -64,7 +74,7 @@ const router = createRouter({
   routes
 });
 
-const isDevelopmentMode = true; // Set this to false to enable authentication checks
+const isDevelopmentMode = false; // Set this to false to enable authentication checks
 
 router.beforeEach(async (to, from, next) => {
   if (isDevelopmentMode) {
@@ -76,7 +86,7 @@ router.beforeEach(async (to, from, next) => {
         next({ path: '/login' });
       } else {
         try {
-          const response = await fetch('/auth/validate', {
+          const response = await fetch(`${apiBaseUrl}/auth/validate`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
