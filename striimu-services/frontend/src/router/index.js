@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 import ErrorView from '../views/ErrorView.vue'; // Ensure you have this view
 
-const apiBaseUrl = 'http://192.168.63.159:3000';
+const apiBaseUrl = 'backend:3000'; // Use Docker service name
 
 const routes = [
   {
@@ -63,6 +63,7 @@ const routes = [
     component: ErrorView,
     props: true
   },
+
   {
     path: '/:catchAll(.*)',
     redirect: '/login'

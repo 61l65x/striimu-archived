@@ -36,7 +36,7 @@
 </template>
 
 <script>
-const apiBaseUrl = 'http://192.168.63.159:3000';
+const apiBaseUrl = 'backend-1:3000';
 
 export default {
   name: 'LoginView',

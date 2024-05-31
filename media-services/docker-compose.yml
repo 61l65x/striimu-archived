@@ -49,6 +49,7 @@ services:
     profiles:
       - all
       - streaming
+      - striimu
     environment:
       - NODE_ENV=production
     ports:
@@ -68,6 +69,7 @@ services:
     profiles:
       - all
       - streaming
+      - striimu
     networks:
       - internal
     #environment:

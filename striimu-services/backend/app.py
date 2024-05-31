@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
+from flask_wtf.csrf import CSRFProtect
 import jwt
 import datetime
 from dotenv import load_dotenv
@@ -7,11 +8,13 @@ from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 import uuid
 from peewee import *
+from password_validator import PasswordValidator
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+csrf = CSRFProtect(app)
 bcrypt = Bcrypt(app)
 
 # Ensure the database is in the current directory
@@ -19,6 +22,13 @@ db = SqliteDatabase('users.db')
 
 JWT_SECRET = os.getenv('JWT_SECRET')
 ADMIN_TOKEN = os.getenv('ADMIN_TOKEN')
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+# Set the secret key for Flask
+app.config['SECRET_KEY'] = SECRET_KEY
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 class BaseModel(Model):
     class Meta:
@@ -36,7 +46,21 @@ class EarlyAccessToken(BaseModel):
 db.connect()
 db.create_tables([User, EarlyAccessToken])
 
+# Define a password schema
+password_schema = PasswordValidator()
+
+# Add properties to the schema
+password_schema \
+    .min(8) \
+    .max(100) \
+    .has().uppercase() \
+    .has().lowercase() \
+    .has().digits() \
+    .has().no().spaces() \
+    .has().symbols()
+
 @app.route('/auth/register', methods=['POST'])
+@csrf.exempt  # Exempt the CSRF check for API endpoints for now
 def register():
     data = request.get_json()
     username = data.get('username')
@@ -53,6 +77,10 @@ def register():
     if not token_record:
         return jsonify({'message': 'Invalid or used access token'}), 400
 
+    # Enforce strong password policy
+    if not password_schema.validate(password):
+        return jsonify({'message': 'Password does not meet the security requirements'}), 400
+
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     user_key = str(uuid.uuid4())
     new_user = User.create(username=username, password=hashed_password, user_key=user_key)
@@ -64,9 +92,13 @@ def register():
     # Generate token
     token = jwt.encode({'username': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)}, JWT_SECRET, algorithm='HS256')
 
-    return jsonify({'message': 'User registered successfully', 'key': user_key, 'token': token}), 201
+    response = make_response(jsonify({'message': 'User registered successfully', 'key': user_key, 'token': token}))
+    response.set_cookie('token', token, httponly=True, secure=True)  # Ensure Secure flag is used in production
+
+    return response, 201
 
 @app.route('/auth/login', methods=['POST'])
+@csrf.exempt
 def login():
     data = request.get_json()
     username = data.get('username')
@@ -80,7 +112,11 @@ def login():
         return jsonify({'message': 'Invalid username or password'}), 401
 
     token = jwt.encode({'username': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)}, JWT_SECRET, algorithm='HS256')
-    return jsonify({'token': token})
+
+    response = make_response(jsonify({'message': 'Login successful'}))
+    response.set_cookie('token', token, httponly=True, secure=True)  # Ensure Secure flag is used in production
+
+    return response
 
 @app.route('/auth/validate', methods=['GET'])
 def validate_token():
@@ -102,6 +138,7 @@ def validate_token():
         return jsonify({'message': 'Invalid token'}), 401
 
 @app.route('/admin/clean', methods=['POST'])
+@csrf.exempt
 def clean_db():
     token = request.headers.get('Authorization')
     if not token:
@@ -119,6 +156,7 @@ def clean_db():
     return jsonify({'message': 'Database cleaned successfully'}), 200
 
 @app.route('/admin/generate-token', methods=['POST'])
+@csrf.exempt
 def generate_invitation_token():
     token = request.headers.get('Authorization')
     if not token or token != f"Bearer {ADMIN_TOKEN}":
