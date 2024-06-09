@@ -18,7 +18,6 @@ services:
     volumes:
       - ./media-services/shared-media-downloads:/data/downloads
       - ./media-services/services/rdt-client/db:/data/db
-    restart: always
     logging:
       driver: json-file
       options:
@@ -50,6 +49,7 @@ services:
       - all
       - streaming
       - striimu
+      - localstreaming
     environment:
       - NODE_ENV=production
     ports:
@@ -70,6 +70,7 @@ services:
       - all
       - streaming
       - striimu
+      - localstreaming
     networks:
       - internal
     #environment:

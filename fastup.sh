@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define profiles
-declare -a profiles=("streaming" "install" "striimu" "server" "localdebug")
+declare -a profiles=("localstreaming" "streaming" "install" "striimu" "server" "localdebug")
 
 # Get the current working directory
 ROOT_DIR=$(pwd)
@@ -64,13 +64,13 @@ function get_profile_choices() {
         echo "$((i+1)). ${profiles[$i]}"
     done
     echo "6. All"
-    echo "Enter the numbers of the profiles you want to start (comma-separated), or '6' for all:"
+    echo "Enter the numbers of the profiles you want to start (comma-separated), or '7' for all:"
     read -p "Input: " input
     IFS=',' read -ra choices <<< "$input"
     selected_profiles=()
 
     for choice in "${choices[@]}"; do
-        if [[ "$choice" -eq 6 ]]; then
+        if [[ "$choice" -eq 7 ]]; then
             selected_profiles=("all")
             break
         elif ((choice > 0 && choice <= ${#profiles[@]})); then

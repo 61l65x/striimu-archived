@@ -13,7 +13,7 @@
 *.key
 *.csr
 **.log
-
+**certs/
 
 # Ignore Docker artifacts
 docker-compose.override.yml
