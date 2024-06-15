@@ -33,8 +33,10 @@ services:
       - install
     networks:
       - internal
-    #ports:
-    #  - "8096:8096" #REMOVE IN PRODUCTION
+    expose:
+      - "8096"
+    ports:
+      - "8096:8096" #REMOVE IN PRODUCTION
     volumes:
       -  ./media-services/shared-media-downloads:/downloads
       -  ./media-services/services/jellyfin/config:/config
@@ -52,6 +54,8 @@ services:
       - localstreaming
     environment:
       - NODE_ENV=production
+    expose:
+     - "8080"
     ports:
       - "8081:8080"  # REMOVE IN PRODUCTION 
     build:
@@ -75,8 +79,10 @@ services:
       - internal
     #environment:
     #  - NO_CORS=1
+    expose:
+      - "11470"
     ports:
-    - "11470:11470" # REMOVE IN PRODUCTION
+     - "11470:11470" # REMOVE IN PRODUCTION
     volumes:
       - ./media-services/services/stremio-server/server-storage:/root/.stremio-server
       - /usr/bin/vlc:/usr/bin/vlc
