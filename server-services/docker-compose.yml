@@ -14,6 +14,11 @@ services:
     container_name: nginx
     networks:
       - internal
+    profiles:
+      - all
+      - install
+      - server
+      - striimu
     ports:
       - "80:80"
       - "443:443"
