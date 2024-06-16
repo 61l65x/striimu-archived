@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        a {
+            display: block;
+            margin: 20px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        function setTokenAndRedirect(serviceUrl) {
+            const token = localStorage.getItem('jwt_token'); // Retrieve the token from localStorage
+            if (!token) {
+                alert('Token not found. Please log in first.');
+                window.location.href = '/login'; // Redirect to login page if no token
+                return;
+            }
+
+            // Create a form to submit the token
+            const form = document.createElement('form');
+            form.method = 'GET';
+            form.action = serviceUrl;
+
+            // Create a hidden input to store the token
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = 'Authorization';
+            tokenInput.value = 'Bearer ' + token;
+            form.appendChild(tokenInput);
+
+            // Append the form to the body and submit it
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</head>
+<body>
+    <h1>Welcome to the Media Server</h1>
+    <a href="javascript:void(0);" onclick="setTokenAndRedirect('/stremio-web');">Go to Stremio</a>
+    <a href="javascript:void(0);" onclick="setTokenAndRedirect('/jellyfin');">Go to Jellyfin</a>
+</body>
+</html>

@@ -24,7 +24,6 @@ function docker_compose_up()
     echo "Starting profiles: ${selected_profiles[*]}..."
     docker compose  -f ${ROOT_DIR}/docker-compose.yml \
                     -f ${ROOT_DIR}/media-services/docker-compose.yml \
-                    -f ${ROOT_DIR}/striimu-services/docker-compose.yml \
                     -f ${ROOT_DIR}/server-services/docker-compose.yml \
                     "${profiles_args[@]}" up $build_no_cache_flag
 }

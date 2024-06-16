@@ -31,6 +31,7 @@ services:
     profiles:
       - all
       - install
+      - striimu
     networks:
       - internal
     #ports:
