@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 import ErrorView from '../views/ErrorView.vue'; // Ensure you have this view
 
-const apiBaseUrl = 'backend:3000'; // Use Docker service name
+const apiBaseUrl = process.env.VUE_APP_BACKEND_URL || 'http://backend:3000';
 
 const routes = [
   {
@@ -28,15 +28,11 @@ const routes = [
     name: 'StremioWeb',
     meta: { requiresAuth: true },
     beforeEnter: async (to, from, next) => {
-      try {
-        const response = await fetch(`${apiBaseUrl}/stremio-web/`);
-        if (response.ok) {
-          location.href = `${apiBaseUrl}/stremio-web/`;
-        } else {
-          next({ name: 'ErrorView', params: { message: 'Stremio service is unavailable.' } });
-        }
-      } catch (error) {
-        next({ name: 'ErrorView', params: { message: 'Stremio service is unavailable.' } });
+      const token = localStorage.getItem('token');
+      if (!token) {
+        next('/login');
+      } else {
+        next();
       }
     }
   },
@@ -45,15 +41,11 @@ const routes = [
     name: 'Jellyfin',
     meta: { requiresAuth: true },
     beforeEnter: async (to, from, next) => {
-      try {
-        const response = await fetch(`${apiBaseUrl}/jellyfin/`);
-        if (response.ok) {
-          location.href = `${apiBaseUrl}/jellyfin/`;
-        } else {
-          next({ name: 'ErrorView', params: { message: 'Jellyfin service is unavailable.' } });
-        }
-      } catch (error) {
-        next({ name: 'ErrorView', params: { message: 'Jellyfin service is unavailable.' } });
+      const token = localStorage.getItem('token');
+      if (!token) {
+        next('/login');
+      } else {
+        next();
       }
     }
   },
@@ -63,7 +55,6 @@ const routes = [
     component: ErrorView,
     props: true
   },
-
   {
     path: '/:catchAll(.*)',
     redirect: '/login'

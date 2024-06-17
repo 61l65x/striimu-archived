@@ -3,6 +3,9 @@ FROM node:14 AS build-stage
 
 WORKDIR /app
 
+ARG VUE_APP_BACKEND_URL
+ENV VUE_APP_BACKEND_URL=$VUE_APP_BACKEND_URL
+
 COPY package*.json ./
 RUN npm install
 
@@ -13,6 +16,9 @@ RUN npm run build
 FROM node:14-alpine
 
 WORKDIR /app
+
+# Install curl
+RUN apk add --no-cache curl
 
 # Copy the build artifacts from the build stage
 COPY --from=build-stage /app/dist /app/dist

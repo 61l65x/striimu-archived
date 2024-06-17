@@ -38,6 +38,8 @@
 <script>
 const apiBaseUrl = 'http://backend:3000';
 
+console.error('API Base URL:', apiBaseUrl);
+
 export default {
   name: 'LoginView',
   data() {
@@ -101,6 +103,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style scoped>

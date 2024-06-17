@@ -7,6 +7,7 @@ networks:
 
 services:
   backend:
+    container_name: backend
     build:
       context: ./striimu-services/backend
       dockerfile: Dockerfile
@@ -30,6 +31,7 @@ services:
       - "3000"
 
   frontend:
+    container_name: frontend
     build:
       context: ./striimu-services/frontend
       dockerfile: Dockerfile
@@ -39,6 +41,7 @@ services:
     volumes:
       - ./striimu-services/frontend:/app
       - /app/node_modules  # Avoid node_modules override
+      - /app/dist
     networks:
       - internal
     restart: unless-stopped
@@ -47,7 +50,7 @@ services:
       - streaming
       - install
       - striimu
-    ports:      # FOR DEBUG REMOVE IN PRODUCTION
-      - "8080:8080"
+    #ports:      # FOR DEBUG REMOVE IN PRODUCTION
+    #  - "8080:8080"
     expose:
       - "8080"
