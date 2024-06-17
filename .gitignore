@@ -1,4 +1,5 @@
 # Ignore configuration and cache directories
+**.htpasswd
 **config/
 **cache/
 **media/

@@ -9,7 +9,8 @@ LABEL Description="Stremio Web" Vendor="Smart Code OOD" Version="1.0.0"
 WORKDIR /var/www/stremio-web
 
 # Install git and clone the repository
-RUN apk add --no-cache git
+RUN apk add --no-cache git && \
+    apk add --no-cache curl
 RUN git clone https://github.com/Stremio/stremio-web.git .
 
 # Build the application

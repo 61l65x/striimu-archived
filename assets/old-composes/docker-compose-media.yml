@@ -3,27 +3,10 @@
 networks:
   internal:
     name: internal
-    #driver: bridge
+    driver: bridge
     external: true
 
 services:
-  rdtclient:
-    container_name: rdtclient # Real-Debrid Torrent Client
-    image: rogerfar/rdtclient
-    networks:
-      - internal
-    profiles:
-      - all
-      - install
-    volumes:
-      - ./media-services/shared-media-downloads:/data/downloads
-      - ./media-services/services/rdt-client/db:/data/db
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-    #ports:
-    #  - '6500:6500' # REMOVE IN PRODUCTION
 
   jellyfin:
     image: jellyfin/jellyfin
@@ -31,8 +14,11 @@ services:
     profiles:
       - all
       - install
+      - striimu
     networks:
       - internal
+    expose:
+      - "8096"
     #ports:
     #  - "8096:8096" #REMOVE IN PRODUCTION
     volumes:
@@ -52,15 +38,16 @@ services:
       - localstreaming
     environment:
       - NODE_ENV=production
-    ports:
-      - "8081:8080"  # REMOVE IN PRODUCTION 
+      - STREMIO_SERVER_URL=http://stremio-server:11470
+    expose:
+      - "8080"
+   # ports:
+    #  - "8081:8080"  # REMOVE IN PRODUCTION 
     build:
       context:  ./media-services/services/stremio-web/stremio-web
       dockerfile: Dockerfile
     networks:
       - internal
-    volumes:
-      - /usr/bin/vlc:/usr/bin/vlc
     restart: unless-stopped
 
   stremio-server:
@@ -75,12 +62,19 @@ services:
       - internal
     #environment:
     #  - NO_CORS=1
+    expose:
+      - "11470"
     ports:
-    - "11470:11470" # REMOVE IN PRODUCTION
+      - "11470:11470" # REMOVE IN PRODUCTION
     volumes:
       - ./media-services/services/stremio-server/server-storage:/root/.stremio-server
-      - /usr/bin/vlc:/usr/bin/vlc
     restart: unless-stopped
+
+
+
+
+
+
 
   qbittorrent:
     image: linuxserver/qbittorrent
@@ -178,3 +172,21 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     restart: unless-stopped
+
+    rdtclient:
+    container_name: rdtclient # Real-Debrid Torrent Client
+    image: rogerfar/rdtclient
+    networks:
+      - internal
+    profiles:
+      - all
+      - install
+    volumes:
+      - ./media-services/shared-media-downloads:/data/downloads
+      - ./media-services/services/rdt-client/db:/data/db
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+    #ports:
+    #  - '6500:6500' # REMOVE IN PRODUCTION

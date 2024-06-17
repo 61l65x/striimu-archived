@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Selection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #300A24;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #f7f7f7;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 20px 0;
+            text-align: center;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+            background-color: #007BFF;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        .service-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .service-container img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .service-container a {
+            width: 200px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select a Service</h1>
+    <ul>
+        <li>
+            <div class="service-container">
+                <img src="assets/jellyfin_logo.png" alt="Library">
+                <a href="/jellyfin">Library</a>
+            </div>
+        </li>
+        <li>
+            <div class="service-container">
+                <img src="assets/stremio_logo.jpg" alt="Streaming">
+                <a href="/stremio-web">Streaming</a>
+            </div>
+        </li>
+    </ul>
+</body>
+</html>

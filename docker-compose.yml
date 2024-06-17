@@ -1,7 +1,195 @@
-
-services: {}
-
 networks:
   internal:
     name: internal
+    driver: bridge
     external: true
+
+services:
+
+  stremio-web:
+    container_name: stremio-web
+    image: stremio-web:latest
+    environment:
+      - NODE_ENV=production
+    expose:
+      - "8080"
+    build:
+      context: ./media-services/services/stremio-web/stremio-web
+      dockerfile: Dockerfile
+    networks:
+      - internal
+    restart: unless-stopped
+
+  stremio-server:
+    image: stremio/server:latest
+    container_name: stremio-server
+    networks:
+      - internal
+    expose:
+      - "11470"
+    ports:
+      - "11470:11470" 
+    volumes:
+      - ./media-services/services/stremio-server/server-storage:/root/.stremio-server
+    restart: unless-stopped
+
+  nginx:
+    build:
+      context: ./server-services/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    networks:
+      - internal
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./server-services/nginx/mime.types:/etc/nginx/mime.types
+      - ./server-services/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./server-services/nginx/proxy_params.conf:/etc/nginx/proxy_params.conf
+      - ./server-services/nginx/certs/server.crt:/etc/nginx/certs/server.crt
+      - ./server-services/nginx/certs/server.key:/etc/nginx/certs/server.key
+      - ./server-services/nginx/nginx-html:/usr/share/nginx/html
+      - ./server-services/nginx/.htpasswd:/etc/nginx/.htpasswd
+    restart: unless-stopped
+
+  
+  fail2ban:
+    image: crazymax/fail2ban
+    container_name: fail2ban
+    profiles:
+      - all
+      - install
+      - streaming
+      - server
+      - striimu
+    network_mode: host
+    volumes:
+      - ./server-services/fail2ban/logs/nginx:/var/log/nginx
+      - ./server-services/fail2ban/logs/qbittorrent:/var/log/qbittorrent
+      - ./server-services/fail2ban/logs/radarr:/var/log/radarr
+      - ./server-services/fail2ban/logs/sonarr:/var/log/sonarr
+      - ./server-services/fail2ban/logs/bazarr:/var/log/bazarr
+      - ./server-services/fail2ban/logs/jackett:/var/log/jackett
+      - ./server-services/fail2ban/logs/stremio-web:/var/log/stremio-web
+      - ./server-services/fail2ban/logs/stremio-server:/var/log/stremio-server
+      - ./server-services/fail2ban:/config/fail2ban
+      - ./server-services/fail2ban/jail.local:/config/fail2ban/jail.local
+      - ./server-services/fail2ban/filter.d:/config/fail2ban/filter.d
+    environment:
+      - F2B_LOG_LEVEL=INFO
+      - F2B_JAIL_LOCAL=/config/fail2ban/jail.local
+    restart: unless-stopped
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    networks:
+      - internal
+    expose:
+      - "8096"
+    volumes:
+      - ./media-services/shared-media-downloads:/downloads
+      - ./media-services/services/jellyfin/config:/config
+      - ./media-services/services/jellyfin/cache:/cache
+    restart: unless-stopped
+
+  
+
+
+  #qbittorrent:
+  #  image: linuxserver/qbittorrent
+  #  container_name: qbittorrent
+  #  profiles:
+  #    - all
+  #    - install
+  #  networks:
+  #    - internal
+  #  ports:
+  #    - "8082:8080" # REMOVE IN PRODUCTION GET TROUGH NGINX
+  #    - "6881:6881"
+  #    - "6881:6881/udp"
+  #  volumes:
+  #    -  ./media-services/shared-media-downloads:/downloads
+  #    -  ./media-services/services/qbittorrent/config/qbittorrent:/config
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Etc/UTC
+  #    - WEBUI_PORT=8080
+  #  restart: unless-stoppe#d
+
+  #radarr:
+  #  image: linuxserver/radarr
+  #  container_name: radarr
+  #  profiles:
+  #    - all
+  #    - install
+  #  networks:
+  #    - internal
+  #  #ports: # REMOVE IN PRODUCTION
+  #  #  - "7878:7878"
+  #  volumes:
+  #    - ./media-services/shared-media-downloads:/downloads
+  #    - ./media-services/services/radarr/config/radarr:/config
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Etc/UTC
+  #  restart: unless-stoppe#d
+
+  #sonarr:
+  #  image: linuxserver/sonarr
+  #  container_name: sonarr
+  #  profiles:
+  #    - install
+  #    - all
+  #  networks:
+  #    - internal
+  # #ports:  # REMOVE IN PRODUCTION
+  #  #  - "8989:8989"
+  #  volumes:
+  #    - ./media-services/shared-media-downloads:/downloads
+  #    - ./media-services/services/sonarr/config/sonarr:/config
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Etc/UTC
+  #  restart: unless-stoppe#d
+
+  #bazarr:
+  #  image: linuxserver/bazarr
+  #  container_name: bazarr
+  #  profiles:
+  #    - install
+  #    - all
+  #  networks:
+  #    - internal
+  #  #ports: # REMOVE IN PRODUCTION
+  #  #  - "6767:6767"
+  #  volumes:
+  #    - ./media-services/shared-media-downloads:/downloads
+  #    - ./media-services/services/bazarr/config/bazarr:/config
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Etc/UTC
+  #  restart: unless-stopped
+#  
+  #jackett:
+  #  image: linuxserver/jackett
+  #  container_name: jackett
+  #  profiles:
+  #    - install
+  #    - all
+  #  networks:
+  #    - internal
+  #  #ports: # REMOVE IN PRODUCTION
+  #  #  - "9117:9117"
+  #  volumes:
+  #    - ./media-services/services/jackett/config/jackett:/config
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Etc/UTC
+  #  restart: unless-stopped

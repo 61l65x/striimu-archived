@@ -7,14 +7,8 @@ declare -a profiles=("localstreaming" "streaming" "install" "striimu" "server" "
 ROOT_DIR=$(pwd)
 
 # Function to start Docker Compose services
-function docker_compose_up()
-{
+function docker_compose_up() {
     read -p "Do you want to build the images ? (y/n): " build_no_cache_answer
-    build_no_cache_flag=""
-
-    if [[ "$build_no_cache_answer" == "y" ]]; then
-        build_no_cache_flag="--build"
-    fi
 
     profiles_args=()
     for profile in "${selected_profiles[@]}"; do
@@ -22,11 +16,19 @@ function docker_compose_up()
     done
 
     echo "Starting profiles: ${selected_profiles[*]}..."
-    docker compose  -f ${ROOT_DIR}/docker-compose.yml \
-                    -f ${ROOT_DIR}/media-services/docker-compose.yml \
-                    -f ${ROOT_DIR}/striimu-services/docker-compose.yml \
-                    -f ${ROOT_DIR}/server-services/docker-compose.yml \
-                    "${profiles_args[@]}" up $build_no_cache_flag
+
+    if [[ "$build_no_cache_answer" == "y" ]]; then
+        echo "Building images with no cache..."
+        docker compose -f ${ROOT_DIR}/docker-compose.yml \
+                       -f ${ROOT_DIR}/media-services/docker-compose.yml \
+                       -f ${ROOT_DIR}/server-services/docker-compose.yml \
+                       "${profiles_args[@]}" build --no-cache
+    fi
+
+    docker compose -f ${ROOT_DIR}/docker-compose.yml \
+                   -f ${ROOT_DIR}/media-services/docker-compose.yml \
+                   -f ${ROOT_DIR}/server-services/docker-compose.yml \
+                   "${profiles_args[@]}" up
 }
 
 # Function to open the monitoring window

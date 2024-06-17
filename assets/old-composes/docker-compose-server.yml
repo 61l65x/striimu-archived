@@ -8,7 +8,9 @@ networks:
 
 services:
   nginx:
-    image: nginx:latest
+    build:
+      context: ./server-services/nginx
+      dockerfile: Dockerfile.nginx
     container_name: nginx
     profiles:
       - all
@@ -27,7 +29,10 @@ services:
       - ./server-services/nginx/proxy_params.conf:/etc/nginx/proxy_params.conf
       - ./server-services/nginx/certs/server.crt:/etc/nginx/certs/server.crt
       - ./server-services/nginx/certs/server.key:/etc/nginx/certs/server.key
+      - ./server-services/nginx/nginx-html:/usr/share/nginx/html
+      - ./server-services/nginx/.htpasswd:/etc/nginx/.htpasswd
     restart: unless-stopped
+
 
   fail2ban:
     image: crazymax/fail2ban

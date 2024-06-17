@@ -1,0 +1,21 @@
+
+services:
+  jellyfin:
+    ports: []
+
+  stremio-web:
+    ports: []
+    environment:
+      - NODE_ENV=production
+
+  stremio-server:
+    ports: []
+
+  nginx:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  fail2ban:
