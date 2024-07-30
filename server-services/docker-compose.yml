@@ -22,11 +22,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./server-services/nginx/mime.types:/etc/nginx/mime.types
-      - ./server-services/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./server-services/nginx/proxy_params.conf:/etc/nginx/proxy_params.conf
-      - ./server-services/nginx/certs/server.crt:/etc/nginx/certs/server.crt
-      - ./server-services/nginx/certs/server.key:/etc/nginx/certs/server.key
+      - ./nginx/mime.types:/etc/nginx/mime.types
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/proxy_params.conf:/etc/nginx/proxy_params.conf
+      - ./nginx/certs/server.crt:/etc/nginx/certs/server.crt
+      - ./nginx/certs/server.key:/etc/nginx/certs/server.key
     restart: unless-stopped
 
   fail2ban:
@@ -40,17 +40,17 @@ services:
       - striimu
     network_mode: host
     volumes:
-      - ./server-services/fail2ban/logs/nginx:/var/log/nginx
-      - ./server-services/fail2ban/logs/qbittorrent:/var/log/qbittorrent
-      - ./server-services/fail2ban/logs/radarr:/var/log/radarr
-      - ./server-services/fail2ban/logs/sonarr:/var/log/sonarr
-      - ./server-services/fail2ban/logs/bazarr:/var/log/bazarr
-      - ./server-services/fail2ban/logs/jackett:/var/log/jackett
-      - ./server-services/fail2ban/logs/stremio-web:/var/log/stremio-web
-      - ./server-services/fail2ban/logs/stremio-server:/var/log/stremio-server
-      - ./server-services/fail2ban:/config/fail2ban
-      - ./server-services/fail2ban/jail.local:/config/fail2ban/jail.local
-      - ./server-services/fail2ban/filter.d:/config/fail2ban/filter.d
+      - ./fail2ban/logs/nginx:/var/log/nginx
+      - ./fail2ban/logs/qbittorrent:/var/log/qbittorrent
+      - ./fail2ban/logs/radarr:/var/log/radarr
+      - ./fail2ban/logs/sonarr:/var/log/sonarr
+      - ./fail2ban/logs/bazarr:/var/log/bazarr
+      - ./fail2ban/logs/jackett:/var/log/jackett
+      - ./fail2ban/logs/stremio-web:/var/log/stremio-web
+      - ./fail2ban/logs/stremio-server:/var/log/stremio-server
+      - ./fail2ban:/config/fail2ban
+      - ./fail2ban/jail.local:/config/fail2ban/jail.local
+      - ./fail2ban/filter.d:/config/fail2ban/filter.d
     environment:
       - F2B_LOG_LEVEL=INFO
       - F2B_JAIL_LOCAL=/config/fail2ban/jail.local

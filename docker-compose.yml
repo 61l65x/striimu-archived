@@ -4,4 +4,5 @@ services: {}
 networks:
   internal:
     name: internal
-    external: true
+    driver: bridge
+    

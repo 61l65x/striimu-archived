@@ -8,14 +8,14 @@ networks:
 services:
   backend:
     build:
-      context: ./striimu-services/backend
+      context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./striimu-services/backend:/app
-      - ./striimu-services/backend/certs:/certs
+      - ./backend:/app
+      - ./backend/certs:/certs
       - /app/__pycache__  # Optional: to avoid caching issues
-    env_file:
-      - ./striimu-services/backend/.env
+    #env_file:
+    #  - ./backend/.env
     networks:
       - internal
     restart: unless-stopped
@@ -31,12 +31,12 @@ services:
 
   frontend:
     build:
-      context: ./striimu-services/frontend
+      context: ./frontend
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=development
     volumes:
-      - ./striimu-services/frontend:/app
+      - ./frontend:/app
       - /app/node_modules  # Avoid node_modules override
     networks:
       - internal
