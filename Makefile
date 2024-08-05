@@ -13,7 +13,7 @@ STRIIMU_SERVICES_COMPOSE_FILE = striimu-services/docker-compose.yml
 # Define Docker Compose command
 DOCKER_COMPOSE = docker compose
 
-.PHONY: all network up down restart assets media server striimu
+.PHONY: all network up down restart assets media server striimu logs local-stremio
 
 all: up
 
@@ -42,8 +42,10 @@ restart: down up
 media:
 	$(DOCKER_COMPOSE) -f $(MEDIA_SERVICES_COMPOSE_FILE) --profile $(PROFILE) up -d
 
-localstream:
-	$(DOCKER_COMPOSE) -f $(MEDIA_SERVICES_COMPOSE_FILE) --profile localstreaming up 
+local-stremio:
+	@echo "Starting local Stremio server"
+	$(DOCKER_COMPOSE) -f local-stremio/docker-compose.yml up & wait
+	$(DOCKER_COMPOSE) -f local-stremio/docker-compose.yml down
 
 server:
 	$(DOCKER_COMPOSE) -f $(SERVER_SERVICES_COMPOSE_FILE) --profile $(PROFILE) up -d

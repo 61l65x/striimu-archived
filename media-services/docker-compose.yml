@@ -41,47 +41,6 @@ services:
       -  ./services/jellyfin/cache:/cache
     restart: unless-stopped
 
-
-  stremio-web:
-    container_name: stremio-web
-    #image: stremio-web:latest
-    profiles:
-      - all
-      - streaming
-      - striimu
-      - localstreaming
-    environment:
-      - NODE_ENV=production
-    ports:
-      - "8081:8080"  # REMOVE IN PRODUCTION 
-    build:
-      context:  ./services/stremio-web/
-      dockerfile: Dockerfile
-    networks:
-      - internal
-    volumes:
-      - /usr/bin/vlc:/usr/bin/vlc
-    restart: unless-stopped
-
-  stremio-server:
-    image: stremio/server:latest
-    container_name: stremio-server
-    profiles:
-      - all
-      - streaming
-      - striimu
-      - localstreaming
-    networks:
-      - internal
-    #environment:
-    #  - NO_CORS=1
-    ports:
-    - "11470:11470" # REMOVE IN PRODUCTION
-    volumes:
-      - ./services/stremio-server/server-storage:/root/.stremio-server
-      - /usr/bin/vlc:/usr/bin/vlc
-    restart: unless-stopped
-
   qbittorrent:
     image: linuxserver/qbittorrent
     container_name: qbittorrent
