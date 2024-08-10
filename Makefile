@@ -43,9 +43,12 @@ media:
 	$(DOCKER_COMPOSE) -f $(MEDIA_SERVICES_COMPOSE_FILE) --profile $(PROFILE) up -d
 
 local-stremio:
-	@echo "Starting local Stremio server"
-	$(DOCKER_COMPOSE) -f local-stremio/docker-compose.yml up & wait
+	$(DOCKER_COMPOSE) -f local-stremio/docker-compose.yml up -d
+local-stremio-down:
 	$(DOCKER_COMPOSE) -f local-stremio/docker-compose.yml down
+local-stremio-logs:
+	$(DOCKER_COMPOSE) -f local-stremio/docker-compose.yml logs --follow
+
 
 server:
 	$(DOCKER_COMPOSE) -f $(SERVER_SERVICES_COMPOSE_FILE) --profile $(PROFILE) up -d
