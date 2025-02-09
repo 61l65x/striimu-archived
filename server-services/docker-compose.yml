@@ -3,8 +3,7 @@
 networks:
   internal:
     name: internal
-    #driver: bridge
-    external: true
+    driver: bridge
 
 services:
   nginx:
