@@ -1,3 +1,4 @@
+**.pem
 # Ignore configuration and cache directories
 **config/
 **cache/
